@@ -1,0 +1,157 @@
+/* =====================================================
+   FORMS.CSS
+   Shared form-field styling plus the auth-card layout used
+   by Sign Up / Sign In, and the CAPTCHA widget.
+   ===================================================== */
+
+/* ---------- Shared form fields ---------- */
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--teal);
+  outline: none;
+}
+
+.form-group textarea { resize: vertical; min-height: 120px; }
+
+.error-msg { color: var(--danger); font-size: 0.8rem; margin-top: 6px; display: none; }
+.error-msg.show { display: block; }
+.form-group input.invalid { border-color: var(--danger); }
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.87rem;
+  color: var(--text-muted);
+}
+.checkbox-row input { width: auto; margin-top: 3px; }
+
+.form-success {
+  background: rgba(16, 165, 178, 0.12);
+  border: 1px solid var(--teal);
+  color: var(--teal-dark);
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  display: none;
+}
+.form-success.show { display: block; }
+body.dark-mode .form-success { color: var(--teal); }
+
+/* ---------- Auth cards (login / signup) ---------- */
+.auth-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 128px 24px 60px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px;
+}
+.auth-card.wide { max-width: 620px; }
+
+.auth-head { text-align: center; margin-bottom: 28px; }
+.auth-head h1 { font-size: 1.55rem; margin-bottom: 8px; }
+.auth-head p { color: var(--text-muted); font-size: 0.9rem; }
+
+.auth-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* Password field with show/hide */
+.password-field { position: relative; }
+.password-field input { padding-right: 46px; }
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 38px;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--teal-dark);
+  font-weight: 600;
+}
+body.dark-mode .toggle-password { color: var(--teal); }
+
+/* CAPTCHA */
+.captcha-box { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+
+.captcha-display {
+  flex: 1;
+  background: var(--bg);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+  font-weight: 700;
+  color: var(--navy);
+  user-select: none;
+}
+body.dark-mode .captcha-display { color: var(--text); }
+
+.captcha-refresh {
+  width: 46px; height: 46px; flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+}
+.captcha-refresh:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+/* Shakes the CAPTCHA box briefly when the entered code is wrong —
+   JS just adds this class for a moment, then removes it. */
+.captcha-display.shake { animation: captchaShake 0.4s ease; }
+@keyframes captchaShake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+
+.captcha-refresh.spin { animation: captchaSpin 0.5s ease; }
+@keyframes captchaSpin { to { transform: rotate(360deg); } }
+
+.auth-alert { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.87rem; margin-bottom: 18px; display: none; }
+.auth-alert.show { display: block; }
+.auth-alert.success { background: rgba(16, 165, 178, 0.12); color: var(--teal-dark); border: 1px solid var(--teal); }
+.auth-alert.error { background: rgba(214, 69, 80, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+body.dark-mode .auth-alert.success { color: var(--teal); }
+
+.auth-footer-link { text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted); }
+.auth-footer-link a { color: var(--teal-dark); font-weight: 600; }
+body.dark-mode .auth-footer-link a { color: var(--teal); }

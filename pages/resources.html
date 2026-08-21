@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources | Placement Prep Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/forms.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body data-page="resources">
+
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading Placement Prep Portal...</p>
+  </div>
+
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-mark">PP</span>
+        Placement Prep Portal
+      </a>
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="../index.html" data-page="home">Home</a></li>
+          <li><a href="resources.html" data-page="resources">Resources</a></li>
+          <li><a href="about.html" data-page="about">About Us</a></li>
+          <li><a href="contact.html" data-page="contact">Contact Us</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+        <a href="login.html" class="nav-btn nav-btn-outline guest-only">Sign In</a>
+        <a href="signup.html" class="nav-btn nav-btn-solid guest-only">Sign Up</a>
+        <a href="dashboard.html" class="nav-btn nav-btn-outline member-only">Dashboard</a>
+        <a href="#" class="nav-btn nav-btn-solid logout-btn member-only">Logout</a>
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-offset">
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Preparation Library</p>
+          <h2>Resources</h2>
+          <p>Browse every preparation topic, or search to jump straight to what you need.</p>
+        </div>
+
+        <div class="hero-search-bar" style="max-width:480px; margin-bottom:40px;">
+          <label for="resource-search" class="visually-hidden">Search Resources</label>
+          <input type="text" id="resource-search" placeholder="Search Resources (e.g. coding)" aria-label="Search Resources" />
+        </div>
+
+        <!-- Resources grid — demonstrates the CSS Grid requirement -->
+        <div class="resources-grid" id="resources-grid">
+
+          <article class="resource-card" data-name="Quantitative Aptitude Aptitude">
+            <span class="icon">📊</span>
+            <h3>Quantitative Aptitude</h3>
+            <p>Percentages, profit &amp; loss, time-speed-distance and more, with practice sets.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="Logical Reasoning Aptitude">
+            <span class="icon">🧩</span>
+            <h3>Logical Reasoning</h3>
+            <p>Puzzles, seating arrangements, series and blood relations for reasoning rounds.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="Verbal Ability Aptitude English">
+            <span class="icon">🗣️</span>
+            <h3>Verbal Ability</h3>
+            <p>Grammar, reading comprehension and vocabulary for English proficiency rounds.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="Coding C C++ Java Python JavaScript SQL">
+            <span class="icon">💻</span>
+            <h3>Coding</h3>
+            <p>Programming basics and problem-solving practice across C, C++, Java, Python and JavaScript.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="DSA Data Structures Algorithms Arrays Strings Linked List Stack Queue">
+            <span class="icon">🌳</span>
+            <h3>DSA</h3>
+            <p>Arrays, strings, linked lists, stacks, queues, searching and sorting for coding rounds.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="OOP Object Oriented Programming">
+            <span class="icon">🏗️</span>
+            <h3>OOP</h3>
+            <p>Classes, objects, inheritance, polymorphism and design principles.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="DBMS Database Management SQL">
+            <span class="icon">🗄️</span>
+            <h3>DBMS</h3>
+            <p>SQL queries, normalization, transactions and database design fundamentals.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="Operating Systems OS">
+            <span class="icon">🖥️</span>
+            <h3>Operating Systems</h3>
+            <p>Processes, scheduling, memory management and deadlock concepts.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="Computer Networks">
+            <span class="icon">🌐</span>
+            <h3>Computer Networks</h3>
+            <p>OSI model, TCP/IP, routing and common networking interview questions.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="Technical Interview Interviews">
+            <span class="icon">🎤</span>
+            <h3>Technical Interviews</h3>
+            <p>Common technical interview questions and how to structure your answers.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="HR Interview Interviews">
+            <span class="icon">🤝</span>
+            <h3>HR Interviews</h3>
+            <p>Behavioural questions, resume walkthroughs and communication tips.</p>
+            <a href="#" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+          <article class="resource-card" data-name="Mock Tests Practice">
+            <span class="icon">📝</span>
+            <h3>Mock Tests</h3>
+            <p>Full-length, placement-style practice tests to simulate the real drive.</p>
+            <a href="../index.html#mock-tests" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+
+        </div>
+
+        <p class="no-results" id="no-results">No resources match your search. Try a different keyword.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="logo">
+            <span class="logo-mark">PP</span>
+            Placement Prep Portal
+          </a>
+          <p>A single platform to prepare for campus placements — aptitude, coding, DSA and interviews, all in one place.</p>
+          <div class="social-row">
+            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Twitter">tw</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="signup.html">Sign Up</a></li>
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="#" class="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>support@placementprep.edu</li>
+            <li>+91 98765 43210</li>
+            <li>Chitkara University, Punjab</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Placement Prep Portal</p>
+        <div class="legal-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms &amp; Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

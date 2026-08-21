@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Placement Prep Portal | Prepare Today. Get Placed Tomorrow.</title>
+  <meta name="description" content="A single platform for aptitude, coding, DSA and interview preparation for campus placements." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/forms.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body data-page="home">
+
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading Placement Prep Portal...</p>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">PP</span>
+        Placement Prep Portal
+      </a>
+
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="pages/resources.html" data-page="resources">Resources</a></li>
+          <li><a href="pages/about.html" data-page="about">About Us</a></li>
+          <li><a href="pages/contact.html" data-page="contact">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+        <a href="pages/login.html" class="nav-btn nav-btn-outline guest-only">Sign In</a>
+        <a href="pages/signup.html" class="nav-btn nav-btn-solid guest-only">Sign Up</a>
+        <a href="pages/dashboard.html" class="nav-btn nav-btn-outline member-only">Dashboard</a>
+        <a href="#" class="nav-btn nav-btn-solid logout-btn member-only">Logout</a>
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <p class="eyebrow" style="color:#5fd6df;">Campus Placement Prep</p>
+          <h1>Prepare Today. <span class="accent-word">Get Placed</span> Tomorrow.</h1>
+          <p>Build the skills, practice the questions and prepare confidently for your next placement — aptitude, coding, DSA and interviews, all on one platform.</p>
+          <div class="hero-actions">
+            <a href="pages/signup.html" class="btn btn-primary guest-only">Create Your Account</a>
+            <a href="pages/dashboard.html" class="btn btn-primary member-only">Go to Dashboard</a>
+            <a href="pages/resources.html" class="btn btn-outline" style="border-color:rgba(255,255,255,0.35); color:#fff;">Explore Resources</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="dash-head">
+            <span>Your Prep Dashboard</span>
+            <span>Week 3</span>
+          </div>
+          <div class="dash-ring">
+            <div class="ring"><span>68%</span></div>
+            <div>
+              <h4>Overall Readiness</h4>
+              <p>Across all 4 preparation paths</p>
+            </div>
+          </div>
+          <div class="dash-row">
+            <span>Aptitude & Reasoning</span>
+            <span class="tag tag-done">DONE</span>
+          </div>
+          <div class="dash-row">
+            <span>Coding & DSA</span>
+            <span class="tag tag-pending">IN PROGRESS</span>
+          </div>
+          <div class="dash-row">
+            <span>Interview Prep</span>
+            <span class="tag tag-pending">PENDING</span>
+          </div>
+          <div class="dash-row">
+            <span>Mock Tests</span>
+            <span class="tag tag-pending">PENDING</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SEARCH SECTION ===== -->
+    <section class="search-section">
+      <div class="container">
+        <div class="search-panel">
+          <h2>What do you want to prepare today?</h2>
+          <form id="hero-search-form">
+            <div class="hero-search-bar">
+              <label for="hero-search-input" class="visually-hidden">Search Aptitude, Coding, DSA, Interviews</label>
+              <input type="text" id="hero-search-input" placeholder="Search Aptitude, Coding, DSA, Interviews..." />
+              <button type="submit">Search</button>
+            </div>
+          </form>
+          <div class="search-chips">
+            <button type="button" class="chip" data-term="DSA">DSA</button>
+            <button type="button" class="chip" data-term="Java">Java</button>
+            <button type="button" class="chip" data-term="Aptitude">Aptitude</button>
+            <button type="button" class="chip" data-term="HR">HR Interview</button>
+            <button type="button" class="chip" data-term="DBMS">DBMS</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== STATISTICS ===== -->
+    <section class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">9+</div>
+          <div class="stat-label">Placement Topics</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4+</div>
+          <div class="stat-label">Preparation Paths</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">20+</div>
+          <div class="stat-label">Practice Resources</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">1</div>
+          <div class="stat-label">Complete Portal</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PREPARATION CATEGORIES ===== -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Preparation Paths</p>
+          <h2>Everything You Need for Placement Preparation</h2>
+          <p>Four focused categories that cover exactly what a campus placement drive tests.</p>
+        </div>
+
+        <div class="categories-grid">
+          <article class="category-card">
+            <h3>Aptitude &amp; Reasoning</h3>
+            <ul>
+              <li>Quantitative Aptitude</li>
+              <li>Logical Reasoning</li>
+              <li>Verbal Ability</li>
+            </ul>
+          </article>
+          <article class="category-card">
+            <h3>Coding &amp; Programming</h3>
+            <ul>
+              <li>C</li>
+              <li>C++</li>
+              <li>Java</li>
+              <li>Python</li>
+              <li>JavaScript</li>
+            </ul>
+          </article>
+          <article class="category-card">
+            <h3>DSA</h3>
+            <ul>
+              <li>Arrays &amp; Strings</li>
+              <li>Searching &amp; Sorting</li>
+              <li>Stack &amp; Queue</li>
+              <li>Linked List</li>
+            </ul>
+          </article>
+          <article class="category-card">
+            <h3>Interview Preparation</h3>
+            <ul>
+              <li>Technical Interview</li>
+              <li>HR Interview</li>
+              <li>Common Questions</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MAIN FEATURE GRID (CSS Grid requirement) ===== -->
+    <section class="section" style="background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Four Pillars</p>
+          <h2>Where Your Preparation Begins</h2>
+          <p>Every campus drive tests the same core areas — the portal is organized around exactly these four.</p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-top">
+              <span class="feature-num">01</span>
+              <span class="feature-icon">📊</span>
+            </div>
+            <h3>Aptitude &amp; Reasoning</h3>
+            <p>Quantitative aptitude, logical reasoning and verbal ability practice sets.</p>
+            <a href="pages/resources.html" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+          <article class="feature-card">
+            <div class="feature-top">
+              <span class="feature-num">02</span>
+              <span class="feature-icon">💻</span>
+            </div>
+            <h3>Coding &amp; DSA</h3>
+            <p>Programming fundamentals, algorithms and data structures, topic by topic.</p>
+            <a href="pages/resources.html" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+          <article class="feature-card">
+            <div class="feature-top">
+              <span class="feature-num">03</span>
+              <span class="feature-icon">🎤</span>
+            </div>
+            <h3>Interview Preparation</h3>
+            <p>Technical interview prep alongside HR round guidance and common questions.</p>
+            <a href="pages/resources.html" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+          <article class="feature-card">
+            <div class="feature-top">
+              <span class="feature-num">04</span>
+              <span class="feature-icon">📝</span>
+            </div>
+            <h3>Mock Tests</h3>
+            <p>Placement-style practice tests to simulate the real recruitment drive.</p>
+            <a href="#mock-tests" class="btn btn-outline btn-sm track-explore">Explore</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== COMPANY PREPARATION ===== -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head center">
+          <p class="eyebrow">Company-Wise Prep</p>
+          <h2>Prepare for Top Companies</h2>
+          <p>Get a feel for the recruitment style of leading recruiters that visit Indian campuses.</p>
+        </div>
+
+        <div class="company-grid">
+          <article class="company-card" data-company="TCS" tabindex="0">
+            <div class="company-mark">TCS</div>
+            <h4>TCS</h4>
+            <span>NQT &amp; Ninja</span>
+          </article>
+          <article class="company-card" data-company="Infosys" tabindex="0">
+            <div class="company-mark">INFY</div>
+            <h4>Infosys</h4>
+            <span>InfyTQ Pattern</span>
+          </article>
+          <article class="company-card" data-company="Wipro" tabindex="0">
+            <div class="company-mark">WPRO</div>
+            <h4>Wipro</h4>
+            <span>Elite &amp; Turbo</span>
+          </article>
+          <article class="company-card" data-company="Accenture" tabindex="0">
+            <div class="company-mark">ACN</div>
+            <h4>Accenture</h4>
+            <span>Cognitive + Coding</span>
+          </article>
+          <article class="company-card" data-company="Deloitte" tabindex="0">
+            <div class="company-mark">DEL</div>
+            <h4>Deloitte</h4>
+            <span>Case + Aptitude</span>
+          </article>
+          <article class="company-card" data-company="Cognizant" tabindex="0">
+            <div class="company-mark">CTS</div>
+            <h4>Cognizant</h4>
+            <span>GenC Pattern</span>
+          </article>
+          <article class="company-card" data-company="Capgemini" tabindex="0">
+            <div class="company-mark">CAP</div>
+            <h4>Capgemini</h4>
+            <span>Pseudo Code Test</span>
+          </article>
+          <article class="company-card" data-company="IBM" tabindex="0">
+            <div class="company-mark">IBM</div>
+            <h4>IBM</h4>
+            <span>Aptitude + Coding</span>
+          </article>
+        </div>
+
+        <p class="company-note" id="company-note"></p>
+      </div>
+    </section>
+
+    <!-- ===== MOCK TESTS ===== -->
+    <section class="section" id="mock-tests" style="background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Practice</p>
+          <h2>Mock Tests</h2>
+          <p>Short, placement-style tests to check where you stand. Try the Aptitude test right now.</p>
+        </div>
+
+        <div class="mocktest-grid">
+          <article class="mocktest-card">
+            <span class="tag">Aptitude</span>
+            <h3>Aptitude Mock Test</h3>
+            <p>5 questions covering quantitative aptitude, reasoning and verbal ability.</p>
+            <button class="btn btn-primary btn-block" id="start-aptitude-test">Start Test</button>
+          </article>
+          <article class="mocktest-card">
+            <span class="tag">Coding</span>
+            <h3>Coding Basics Test</h3>
+            <p>10 questions on programming fundamentals across languages.</p>
+            <a href="pages/resources.html" class="btn btn-outline btn-block">Coming Soon</a>
+          </article>
+          <article class="mocktest-card">
+            <span class="tag">Interview</span>
+            <h3>Interview Basics</h3>
+            <p>10 questions to test your readiness for HR and technical rounds.</p>
+            <a href="pages/resources.html" class="btn btn-outline btn-block">Coming Soon</a>
+          </article>
+        </div>
+
+        <div class="quiz-box" id="quiz-box"></div>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="cta">
+      <div class="cta-inner">
+        <h2 class="guest-only">Your placement prep starts with one account.</h2>
+        <p class="guest-only">Sign up free and get access to every resource on the portal.</p>
+        <h2 class="member-only">Keep the momentum going.</h2>
+        <p class="member-only">Jump back into your dashboard or pick up where you left off in Resources.</p>
+        <div class="hero-actions" style="justify-content:center;">
+          <a href="pages/signup.html" class="btn btn-accent guest-only">Create Your Account</a>
+          <a href="pages/dashboard.html" class="btn btn-accent member-only">Go to Dashboard</a>
+          <a href="pages/resources.html" class="btn btn-outline">Explore Resources</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <span class="logo-mark">PP</span>
+            Placement Prep Portal
+          </a>
+          <p>A single platform to prepare for campus placements — aptitude, coding, DSA and interviews, all in one place.</p>
+          <div class="social-row">
+            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Twitter">tw</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="pages/resources.html">Resources</a></li>
+            <li><a href="pages/about.html">About Us</a></li>
+            <li><a href="pages/contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="pages/signup.html">Sign Up</a></li>
+            <li><a href="pages/login.html">Sign In</a></li>
+            <li><a href="#" class="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>support@placementprep.edu</li>
+            <li>+91 98765 43210</li>
+            <li>Chitkara University, Punjab</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Placement Prep Portal</p>
+        <div class="legal-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms &amp; Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

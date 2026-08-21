@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Auto-redirects to the homepage once the loading bar finishes. -->
+<meta http-equiv="refresh" content="6; url=index.html" />
+<title>Loading Placement Prep Portal...</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+<style>
+  /* =====================================================
+     LOADING PAGE
+     A standalone page shown once before the site opens.
+     Everything here is plain CSS: the bar fills using a
+     @keyframes animation, and the meta tag above (see <head>)
+     hands off to index.html once it's done — no JavaScript
+     needed for either part.
+     ===================================================== */
+
+  :root {
+    --navy: #0b203c;
+    --navy-light: #16294a;
+    --teal: #10a5b2;
+    --orange: #f5a524;
+    --text-muted: #9aa7bd;
+    --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+    --font-body: "Inter", "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy);
+    font-family: var(--font-body);
+    color: #ffffff;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .logo-mark {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0 auto 22px;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  h1 .accent { color: var(--orange); }
+
+  .subtitle {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 34px;
+  }
+
+  /* ---------- Progress bar ---------- */
+  .bar-track {
+    width: 100%;
+    max-width: 420px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    margin: 0 auto 12px;
+  }
+
+  .bar-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--teal), var(--orange));
+    animation: loading 5s ease-in-out forwards;
+  }
+
+  @keyframes loading {
+    0%   { width: 0%; }
+    25%  { width: 30%; }
+    55%  { width: 62%; }
+    80%  { width: 85%; }
+    100% { width: 100%; }
+  }
+
+  .status-line {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 52px;
+  }
+
+  /* ---------- Highlight grid (shown while the bar fills) ---------- */
+  .highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .highlight-card {
+    background: var(--navy-light);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 18px 12px;
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  }
+
+  .highlight-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--orange);
+    background: #1c3255;
+  }
+
+  .highlight-card .icon { font-size: 1.4rem; margin-bottom: 8px; }
+
+  .highlight-card h4 {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .highlight-card p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* Mobile: stack the grid to 2 columns */
+  @media (max-width: 520px) {
+    .highlight-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+  <div class="logo-mark">PP</div>
+  <h1>Loading <span class="accent">Placement Prep Portal</span>...</h1>
+  <p class="subtitle">Setting up your preparation dashboard</p>
+
+  <div class="bar-track">
+    <div class="bar-fill"></div>
+  </div>
+  <p class="status-line">PREPARING YOUR WORKSPACE</p>
+
+  <div class="highlight-grid">
+    <article class="highlight-card">
+      <div class="icon">📊</div>
+      <h4>Aptitude</h4>
+      <p>Quant &amp; reasoning</p>
+    </article>
+    <article class="highlight-card">
+      <div class="icon">💻</div>
+      <h4>Coding &amp; DSA</h4>
+      <p>Practice by topic</p>
+    </article>
+    <article class="highlight-card">
+      <div class="icon">🎤</div>
+      <h4>Interviews</h4>
+      <p>Technical &amp; HR</p>
+    </article>
+    <article class="highlight-card">
+      <div class="icon">📝</div>
+      <h4>Mock Tests</h4>
+      <p>Simulate the drive</p>
+    </article>
+  </div>
+
+</body>
+</html>

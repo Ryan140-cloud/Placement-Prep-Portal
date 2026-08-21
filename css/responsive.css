@@ -1,0 +1,101 @@
+/* =====================================================
+   RESPONSIVE.CSS
+   Breakpoints:
+     Desktop/Laptop : 1200px and above (default styles)
+     Tablet         : 768px – 1024px
+     Mobile         : 320px – 480px
+   Rules use "max-width", so each block applies to that size
+   and everything smaller than it.
+   ===================================================== */
+
+/* ---------- TABLET (1024px and below) ---------- */
+@media (max-width: 1024px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-visual { order: -1; max-width: 460px; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .categories-grid { grid-template-columns: repeat(2, 1fr); }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .company-grid { grid-template-columns: repeat(3, 1fr); }
+  .mocktest-grid { grid-template-columns: repeat(2, 1fr); }
+  .resources-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .about-block, .benefit-list { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+
+  .dashboard-stats { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- MOBILE NAV (900px and below) ---------- */
+@media (max-width: 900px) {
+  .hamburger { display: flex; }
+
+  .nav-links {
+    position: fixed;
+    top: 71px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    background: var(--navy);
+    padding: 16px 24px 20px;
+    transform: translateY(-130%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .nav-links.open { transform: translateY(0); opacity: 1; }
+
+  .nav-links a { width: 100%; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+
+  .nav-actions .nav-btn { padding: 9px 16px; }
+}
+
+/* ---------- SMALL TABLET / LARGE MOBILE (768px) ---------- */
+@media (max-width: 768px) {
+  .section { padding: 60px 0; }
+  .hero { padding: 122px 0 50px; }
+
+  .form-row, .auth-two-col { grid-template-columns: 1fr; }
+
+  .cta { margin: 0 16px; padding: 46px 24px; }
+
+  .search-panel { padding: 28px 22px; }
+  .company-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- MOBILE (480px and below) ---------- */
+@media (max-width: 480px) {
+  .container { padding: 0 18px; }
+
+  /* Hide the outline Sign In button on very small screens to
+     reduce clutter — but keep the Dashboard button (also
+     outline-styled) visible for logged-in users. */
+  .nav-actions .guest-only.nav-btn-outline { display: none; }
+
+  .hero-text h1 { font-size: 1.9rem; }
+  .hero-actions .btn { width: 100%; }
+
+  .stats-grid { grid-template-columns: 1fr; gap: 16px; }
+  .categories-grid,
+  .features-grid,
+  .resources-grid,
+  .mocktest-grid,
+  .team-grid { grid-template-columns: 1fr; }
+  .company-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+
+  .auth-card { padding: 28px 22px; }
+  .captcha-display { font-size: 0.92rem; letter-spacing: 0.18em; }
+
+  .hero-search-bar { flex-direction: column; border-radius: var(--radius-sm); }
+  .hero-search-bar button { padding: 13px; }
+
+  .dashboard-stats { grid-template-columns: 1fr; }
+  .dash-stat-card.ring-card { flex-direction: column; text-align: center; }
+}

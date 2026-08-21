@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Placement Prep Portal</title>
+
+  <!-- Auth guard: runs immediately, before the page finishes
+       loading. If nobody is logged in, it sends the visitor
+       back to the Sign In page instead of showing the dashboard. -->
+  <script>
+    if (!localStorage.getItem("loggedInUser")) {
+      window.location.replace("login.html");
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/forms.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body data-page="dashboard">
+
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading Placement Prep Portal...</p>
+  </div>
+
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-mark">PP</span>
+        Placement Prep Portal
+      </a>
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="../index.html" data-page="home">Home</a></li>
+          <li><a href="resources.html" data-page="resources">Resources</a></li>
+          <li><a href="about.html" data-page="about">About Us</a></li>
+          <li><a href="contact.html" data-page="contact">Contact Us</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+        <a href="dashboard.html" class="nav-btn nav-btn-outline member-only">Dashboard</a>
+        <a href="#" class="nav-btn nav-btn-solid logout-btn member-only">Logout</a>
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-offset">
+    <section class="section" style="padding-top:44px;">
+      <div class="container">
+
+        <div class="dashboard-header">
+          <div>
+            <h2 id="welcome-name">Welcome back!</h2>
+            <p id="welcome-sub">Loading your details...</p>
+          </div>
+          <div class="hero-actions">
+            <a href="../index.html#mock-tests" class="btn btn-primary btn-sm">Take a Mock Test</a>
+            <a href="resources.html" class="btn btn-outline btn-sm">Browse Resources</a>
+          </div>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="dashboard-stats">
+          <article class="dash-stat-card ring-card">
+            <div class="dash-ring-lg" id="readiness-ring">
+              <span id="readiness-percent">0%</span>
+            </div>
+            <div>
+              <h4>Overall Readiness</h4>
+              <p>Across all 4 preparation paths</p>
+            </div>
+          </article>
+
+          <article class="dash-stat-card">
+            <span class="stat-number" id="stat-attempts">0</span>
+            <h4>Mock Tests Taken</h4>
+            <p>Total attempts so far</p>
+          </article>
+
+          <article class="dash-stat-card">
+            <span class="stat-number" id="stat-best">—</span>
+            <h4>Best Score</h4>
+            <p>Out of 10</p>
+          </article>
+
+          <article class="dash-stat-card">
+            <span class="stat-number" id="stat-avg">—</span>
+            <h4>Average Score</h4>
+            <p>Out of 10</p>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Left column: progress + history -->
+          <div>
+            <div class="dash-panel">
+              <h3>Preparation Progress</h3>
+
+              <div class="progress-row">
+                <div class="progress-row-head">
+                  <span>Aptitude &amp; Reasoning</span>
+                  <span id="apt-percent">0%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="apt-fill"></div></div>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress-row-head">
+                  <span>Coding &amp; DSA</span>
+                  <span id="coding-percent">0%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="coding-fill"></div></div>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress-row-head">
+                  <span>Interview Preparation</span>
+                  <span id="interview-percent">0%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="interview-fill"></div></div>
+              </div>
+
+              <div class="progress-row">
+                <div class="progress-row-head">
+                  <span>Mock Tests</span>
+                  <span id="mocktest-percent">0%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="mocktest-fill"></div></div>
+              </div>
+            </div>
+
+            <div class="dash-panel">
+              <h3>Mock Test History</h3>
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Test</th>
+                    <th>Score</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="history-body"></tbody>
+              </table>
+              <p class="history-empty" id="history-empty">You haven't taken a mock test yet. <a href="../index.html#mock-tests" style="color:var(--teal-dark); font-weight:600;">Start one now.</a></p>
+            </div>
+          </div>
+
+          <!-- Right column: profile + quick actions -->
+          <div>
+            <div class="dash-panel profile-card">
+              <h3>Your Profile</h3>
+
+              <div id="profile-view">
+                <div class="profile-row"><span>Name</span><span id="profile-name"></span></div>
+                <div class="profile-row"><span>Email</span><span id="profile-email"></span></div>
+                <div class="profile-row"><span>Phone</span><span id="profile-phone"></span></div>
+                <div class="profile-row"><span>College</span><span id="profile-college"></span></div>
+                <div class="profile-row"><span>Course</span><span id="profile-course"></span></div>
+                <div class="profile-row"><span>Grad. Year</span><span id="profile-year"></span></div>
+                <button class="btn btn-outline btn-sm btn-block" id="edit-profile-btn" style="margin-top:18px;">Edit Profile</button>
+              </div>
+
+              <form id="edit-profile-form" class="edit-profile-form">
+                <div class="form-group">
+                  <label for="edit-college">College</label>
+                  <input type="text" id="edit-college" />
+                </div>
+                <div class="form-group">
+                  <label for="edit-course">Course</label>
+                  <input type="text" id="edit-course" />
+                </div>
+                <div class="form-group">
+                  <label for="edit-year">Graduation Year</label>
+                  <select id="edit-year">
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                  <button type="button" class="btn btn-outline btn-sm" id="cancel-edit-btn">Cancel</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="dash-panel">
+              <h3>Quick Actions</h3>
+              <div class="quick-actions">
+                <a href="../index.html#mock-tests" class="btn btn-primary btn-block">Take a Mock Test</a>
+                <a href="resources.html" class="btn btn-outline btn-block">Browse Resources</a>
+                <a href="../index.html#mock-tests" class="btn btn-outline btn-block">Prepare for Companies</a>
+                <a href="#" class="btn btn-outline btn-block logout-btn">Logout</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="logo">
+            <span class="logo-mark">PP</span>
+            Placement Prep Portal
+          </a>
+          <p>A single platform to prepare for campus placements — aptitude, coding, DSA and interviews, all in one place.</p>
+          <div class="social-row">
+            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Twitter">tw</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="#" class="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>support@placementprep.edu</li>
+            <li>+91 98765 43210</li>
+            <li>Chitkara University, Punjab</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Placement Prep Portal</p>
+        <div class="legal-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms &amp; Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>
