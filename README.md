@@ -80,10 +80,6 @@ Placement-Prep-Portal/
 │
 ├── loading.html             → Standalone auto-redirecting loading screen
 │
-├── assets/
-│   ├── images/                    → (reserved for any images you add)
-│   └── icons/                      → (reserved for any icons you add)
-│
 └── README.md
 ```
 
