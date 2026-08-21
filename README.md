@@ -178,15 +178,7 @@ operator — since these are common in real-world JavaScript and are
 usually only lightly covered in a viva focused mainly on HTML/CSS. Every
 function is still short and commented so it's still explainable if asked.
 
-## How to Run
+## Team Details
+**Team Leader** : Ridhi Jain
 
-1. Download or clone the project folder.
-2. Open `index.html` directly in a browser, **or**
-3. In VS Code, install the "Live Server" extension, right-click
-   `index.html` specifically, and choose **"Open with Live Server"**.
-
-No installation, build step, or server setup is required — it's plain
-HTML, CSS, and JavaScript.
-
----
-
+**Team Members** : Ryan Sharma, Garv Goel, Kartik Thakur
