@@ -10,7 +10,7 @@
    so it's fine to keep it in frontend code.
    ===================================================== */
 
-const WEB3FORMS_ACCESS_KEY = "PASTE_MY_KEY_HERE";
+const WEB3FORMS_ACCESS_KEY = "40c7cddc-4ae5-4ce8-8272-d27f49a7db80";
 const WEB3FORMS_URL = "https://api.web3forms.com/submit";
 const SUCCESS_HIDE_MS = 4000; // how long the success message stays visible
 

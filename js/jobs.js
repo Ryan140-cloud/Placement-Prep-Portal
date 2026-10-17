@@ -1,38 +1,40 @@
 /* =====================================================
    JOBS.JS
-   Runs only on pages/jobs.html. Searches jobs and internships
-   in India through our own /api/jobs endpoint (api/jobs.js),
-   which talks to Adzuna on the server so the secret API key
-   never reaches the browser.
+   Runs only on pages/jobs.html. Shows remote jobs open to
+   candidates in India from Himalayas (himalayas.app). The
+   browser can't call Himalayas directly, so we call our own
+   /api/jobs endpoint (api/jobs.js), which fetches the jobs on
+   the server and passes them back.
 
    Safety: every piece of text from the API is put on the page
-   with textContent / createElement, never innerHTML.
+   with textContent / createElement, never innerHTML, and only
+   https:// logo and apply links are used.
    ===================================================== */
 
 const JOBS_ENDPOINT = "/api/jobs";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-const CONTRACT_LABELS = {
-  full_time: "Full time",
-  part_time: "Part time",
+// Short labels for how often a salary is paid.
+const SALARY_PERIOD_LABELS = {
+  hourly: "/ hour",
+  daily: "/ day",
+  weekly: "/ week",
+  monthly: "/ month",
+  annual: "/ year",
+  yearly: "/ year",
 };
 
-// One shared formatter for Indian rupee amounts, e.g. ₹4,50,000.
-const rupees = new Intl.NumberFormat("en-IN", {
-  style: "currency",
-  currency: "INR",
-  maximumFractionDigits: 0,
-});
-
-// What's being searched, which page we're on, and how many jobs
-// are showing. requestId lets us ignore an old, slow request
-// if a newer search has started since.
+// What's being searched, which page we're on, and which jobs are
+// already showing (by guid, so the same job never appears twice).
+// requestId lets us ignore an old, slow request if a newer
+// search has started since.
 const jobsState = {
-  what: "",
-  where: "",
+  q: "",
+  type: "",
+  seniority: "",
   page: 1,
-  loaded: 0,
   total: 0,
+  seenGuids: new Set(),
   requestId: 0,
 };
 
@@ -42,15 +44,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
-    setActiveChip(null);
     startNewSearch();
   });
 
-  // Quick filter chips fill in the keyword box and search.
-  document.querySelectorAll(".job-chip").forEach(function (chip) {
+  // "Internships" / "Freshers" switch a filter on or off.
+  document.querySelectorAll(".job-filter-chip").forEach(function (chip) {
     chip.addEventListener("click", function () {
-      document.getElementById("jobs-what").value = chip.dataset.term;
-      setActiveChip(chip);
+      const isOn = chip.getAttribute("aria-pressed") === "true";
+      chip.setAttribute("aria-pressed", isOn ? "false" : "true");
+      startNewSearch();
+    });
+  });
+
+  // "Software" / "Data" / "Design" fill in the keyword box
+  // (clicking the active one again clears it).
+  document.querySelectorAll(".job-keyword-chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      const input = document.getElementById("jobs-q");
+      const isActive = chip.getAttribute("aria-pressed") === "true";
+      input.value = isActive ? "" : chip.dataset.keyword;
       startNewSearch();
     });
   });
@@ -63,12 +75,29 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function startNewSearch() {
-  jobsState.what = document.getElementById("jobs-what").value.trim();
-  jobsState.where = document.getElementById("jobs-where").value.trim();
-  jobsState.loaded = 0;
+  jobsState.q = document.getElementById("jobs-q").value.trim();
+  jobsState.type = readFilterChip("type");
+  jobsState.seniority = readFilterChip("seniority");
   jobsState.total = 0;
+  jobsState.seenGuids = new Set();
+
+  syncKeywordChips();
   document.getElementById("jobs-grid").replaceChildren();
   loadJobs(1);
+}
+
+// Returns the chip's value if that filter is switched on, else "".
+function readFilterChip(filterName) {
+  const chip = document.querySelector(`.job-filter-chip[data-filter="${filterName}"]`);
+  return chip && chip.getAttribute("aria-pressed") === "true" ? chip.dataset.value : "";
+}
+
+// A keyword chip looks "on" whenever the search box matches it.
+function syncKeywordChips() {
+  document.querySelectorAll(".job-keyword-chip").forEach(function (chip) {
+    const isActive = chip.dataset.keyword.toLowerCase() === jobsState.q.toLowerCase();
+    chip.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
 }
 
 async function loadJobs(page) {
@@ -79,17 +108,26 @@ async function loadJobs(page) {
   setLoading(true, isFirstPage);
 
   try {
-    const data = await fetchJobs(jobsState.what, jobsState.where, page);
+    const data = await fetchJobs(page);
     if (requestId !== jobsState.requestId) return; // a newer search took over
 
     jobsState.page = page;
-    jobsState.total = data.count;
-    jobsState.loaded += data.results.length;
+    jobsState.total = data.totalCount;
 
-    appendJobCards(data.results);
+    // Skip any job we're already showing (same guid).
+    const newJobs = data.jobs.filter(function (job) {
+      if (!job.guid || jobsState.seenGuids.has(job.guid)) return false;
+      jobsState.seenGuids.add(job.guid);
+      return true;
+    });
+
+    appendJobCards(newJobs);
     showSummary();
+
+    // Stop once a page comes back empty, or everything is showing.
+    const isFinished = data.jobs.length === 0 || jobsState.seenGuids.size >= jobsState.total;
     loadMoreBtn.textContent = "Load more";
-    loadMoreBtn.hidden = data.results.length === 0 || jobsState.loaded >= jobsState.total;
+    loadMoreBtn.hidden = isFinished;
   } catch (error) {
     if (requestId !== jobsState.requestId) return;
 
@@ -107,10 +145,11 @@ async function loadJobs(page) {
 
 // Calls our own API and turns every kind of failure into an
 // Error with a message that's safe to show on the page.
-async function fetchJobs(what, where, page) {
+async function fetchJobs(page) {
   const params = new URLSearchParams({ page: String(page) });
-  if (what) params.set("what", what);
-  if (where) params.set("where", where);
+  if (jobsState.q) params.set("q", jobsState.q);
+  if (jobsState.type) params.set("type", jobsState.type);
+  if (jobsState.seniority) params.set("seniority", jobsState.seniority);
 
   let response;
   try {
@@ -132,8 +171,8 @@ async function fetchJobs(what, where, page) {
   }
 
   return {
-    count: Number(data.count) || 0,
-    results: Array.isArray(data.results) ? data.results : [],
+    totalCount: Number(data.totalCount) || 0,
+    jobs: Array.isArray(data.jobs) ? data.jobs : [],
   };
 }
 
@@ -164,24 +203,17 @@ function showStatus(text, kind) {
 }
 
 function showSummary() {
-  if (jobsState.loaded === 0) {
-    showStatus("No jobs found for that search. Try a different keyword or location.", "empty");
+  const shown = jobsState.seenGuids.size;
+  if (shown === 0) {
+    showStatus("No jobs found for that search. Try a different keyword or turn off a filter.", "empty");
     return;
   }
 
-  let text = `Showing ${jobsState.loaded} of ${jobsState.total.toLocaleString("en-IN")} jobs`;
-  if (jobsState.what) text += ` for "${jobsState.what}"`;
-  if (jobsState.where) text += ` in ${jobsState.where}`;
+  let text = `Showing ${shown} of ${jobsState.total.toLocaleString("en-IN")} jobs`;
+  if (jobsState.q) text += ` for "${jobsState.q}"`;
+  if (jobsState.type === "Intern") text += " · Internships";
+  if (jobsState.seniority === "Entry-level") text += " · Freshers";
   showStatus(text, "");
-}
-
-// Highlights the clicked chip (or none) and tells screen readers.
-function setActiveChip(activeChip) {
-  document.querySelectorAll(".job-chip").forEach(function (chip) {
-    const isActive = chip === activeChip;
-    chip.classList.toggle("active", isActive);
-    chip.setAttribute("aria-pressed", isActive ? "true" : "false");
-  });
 }
 
 /* ---------- JOB CARDS ---------- */
@@ -203,29 +235,48 @@ function appendJobCards(jobs) {
 function buildJobCard(job) {
   const card = makeEl("article", "job-card");
 
-  const contractLabel = CONTRACT_LABELS[job.contract_time];
-  if (contractLabel) card.append(makeEl("span", "tag", contractLabel));
+  // Logo + title + company side by side.
+  const head = makeEl("div", "job-card-head");
+  const logo = buildLogo(job.companyLogo);
+  if (logo) head.append(logo);
+  const titleWrap = makeEl("div", "job-title-wrap");
+  titleWrap.append(makeEl("h3", "", job.title || "Untitled role"));
+  titleWrap.append(makeEl("p", "job-company", job.companyName || "Company not listed"));
+  head.append(titleWrap);
+  card.append(head);
 
-  card.append(makeEl("h3", "", job.title || "Untitled role"));
-
-  const company = job.company && job.company.display_name;
-  card.append(makeEl("p", "job-company", company || "Company not listed"));
+  if (job.employmentType) card.append(makeEl("span", "tag", job.employmentType));
 
   const meta = makeEl("ul", "job-meta");
-  const location = job.location && job.location.display_name;
-  if (location) meta.append(makeEl("li", "", `📍 ${location}`));
-  const salary = formatSalary(job.salary_min, job.salary_max);
+  const salary = formatSalary(job);
   if (salary) meta.append(makeEl("li", "", `💰 ${salary}`));
-  const posted = formatPostedDate(job.created);
+  const posted = formatPostedDate(job.pubDate);
   if (posted) meta.append(makeEl("li", "", `🕒 ${posted}`));
   card.append(meta);
 
-  card.append(buildApplyLink(job.redirect_url));
+  card.append(buildApplyLink(job.applicationLink));
   return card;
 }
 
-// "Apply" opens the job on Adzuna in a new tab. Only https links
-// are allowed (the server already checks they're Adzuna links).
+// Company logo, only from an https:// address. If the image
+// fails to load it's simply removed, leaving the text.
+function buildLogo(url) {
+  if (typeof url !== "string" || !url.startsWith("https://")) return null;
+
+  const img = document.createElement("img");
+  img.className = "job-logo";
+  img.src = url;
+  img.alt = ""; // decorative: the company name is right next to it
+  img.width = 44;
+  img.height = 44;
+  img.loading = "lazy";
+  img.addEventListener("error", function () {
+    img.remove();
+  });
+  return img;
+}
+
+// "Apply" opens the job in a new tab, only if it's an https:// link.
 function buildApplyLink(url) {
   if (typeof url !== "string" || !url.startsWith("https://")) {
     return makeEl("p", "job-apply-missing", "Apply link unavailable");
@@ -238,21 +289,41 @@ function buildApplyLink(url) {
   return link;
 }
 
-// e.g. "₹3,00,000 – ₹5,00,000", or one amount if only one is known.
-function formatSalary(min, max) {
-  const low = Number(min) || 0;
-  const high = Number(max) || 0;
-  if (low && high && low !== high) return `${rupees.format(low)} – ${rupees.format(high)}`;
-  const single = low || high;
-  return single ? rupees.format(single) : "";
+// e.g. "$40,000 – $60,000 / year" or "₹30,000 / month".
+// Salaries can be in any currency, so we use the job's own.
+function formatSalary(job) {
+  const low = Number(job.minSalary) || 0;
+  const high = Number(job.maxSalary) || 0;
+  if (!low && !high) return "";
+
+  const amount = low && high && low !== high
+    ? `${formatMoney(low, job.currency)} – ${formatMoney(high, job.currency)}`
+    : formatMoney(low || high, job.currency);
+  const period = SALARY_PERIOD_LABELS[String(job.salaryPeriod).toLowerCase()];
+  return period ? `${amount} ${period}` : amount;
 }
 
-// Turns an ISO date into "Posted today", "Posted 3 days ago", etc.
-function formatPostedDate(created) {
-  const postedAt = Date.parse(created);
-  if (Number.isNaN(postedAt)) return "";
+// Intl.NumberFormat throws on an unknown currency code, so fall
+// back to a plain number followed by the code.
+function formatMoney(amount, currency) {
+  try {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: currency,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch (error) {
+    return `${amount.toLocaleString("en-IN")} ${currency || ""}`.trim();
+  }
+}
 
-  const days = Math.floor((Date.now() - postedAt) / DAY_MS);
+// pubDate is Unix time in seconds. Turns it into "Posted today",
+// "Posted 3 days ago", etc.
+function formatPostedDate(pubDate) {
+  const seconds = Number(pubDate);
+  if (!seconds) return "";
+
+  const days = Math.floor((Date.now() - seconds * 1000) / DAY_MS);
   if (days <= 0) return "Posted today";
   if (days === 1) return "Posted 1 day ago";
   if (days < 30) return `Posted ${days} days ago`;

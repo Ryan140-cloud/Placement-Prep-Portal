@@ -100,9 +100,6 @@
 
   .hero-search-bar { flex-direction: column; border-radius: var(--radius-sm); }
   .hero-search-bar button { padding: 13px; }
-  /* Jobs search stacks vertically here, so the divider moves on top */
-  .jobs-search-bar .jobs-where { border-left: none; border-top: 1px solid var(--border); }
-
   .dashboard-stats { grid-template-columns: 1fr; }
   .dash-stat-card.ring-card { flex-direction: column; text-align: center; }
 

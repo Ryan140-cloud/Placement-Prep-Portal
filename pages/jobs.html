@@ -53,24 +53,23 @@
         <div class="section-head">
           <p class="eyebrow">Opportunities</p>
           <h2>Jobs &amp; Internships</h2>
-          <p>Fresh openings across India for students and new graduates. Search by role and city, or start with a quick filter.</p>
+          <p>Remote jobs open to candidates in India.</p>
         </div>
 
-        <!-- Search: keyword + location. Results come from /api/jobs
-             (api/jobs.js), which fetches them from Adzuna. -->
+        <!-- Search + filters. Results come from /api/jobs (api/jobs.js),
+             which fetches them from the Himalayas jobs API. -->
         <form class="jobs-search" id="jobs-search-form" role="search">
           <div class="hero-search-bar jobs-search-bar">
-            <label for="jobs-what" class="visually-hidden">Job title or keyword</label>
-            <input type="text" id="jobs-what" name="what" placeholder="Role or keyword (e.g. java developer)" maxlength="60" autocomplete="off" />
-            <label for="jobs-where" class="visually-hidden">Location</label>
-            <input type="text" id="jobs-where" class="jobs-where" name="where" placeholder="City (optional)" maxlength="60" autocomplete="off" />
+            <label for="jobs-q" class="visually-hidden">Job title or keyword</label>
+            <input type="text" id="jobs-q" name="q" placeholder="Role or keyword (e.g. frontend)" maxlength="60" autocomplete="off" />
             <button type="submit" id="jobs-search-btn">Search</button>
           </div>
           <div class="search-chips" role="group" aria-label="Quick filters">
-            <button type="button" class="chip job-chip" data-term="Internship" aria-pressed="false">Internship</button>
-            <button type="button" class="chip job-chip" data-term="Fresher" aria-pressed="false">Fresher</button>
-            <button type="button" class="chip job-chip" data-term="Software Developer" aria-pressed="false">Software Developer</button>
-            <button type="button" class="chip job-chip" data-term="Data Analyst" aria-pressed="false">Data Analyst</button>
+            <button type="button" class="chip job-filter-chip" data-filter="type" data-value="Intern" aria-pressed="false">Internships</button>
+            <button type="button" class="chip job-filter-chip" data-filter="seniority" data-value="Entry-level" aria-pressed="false">Freshers</button>
+            <button type="button" class="chip job-keyword-chip" data-keyword="Software" aria-pressed="false">Software</button>
+            <button type="button" class="chip job-keyword-chip" data-keyword="Data" aria-pressed="false">Data</button>
+            <button type="button" class="chip job-keyword-chip" data-keyword="Design" aria-pressed="false">Design</button>
           </div>
         </form>
 
@@ -83,7 +82,8 @@
           <button type="button" class="btn btn-outline" id="jobs-load-more" hidden>Load more</button>
         </div>
 
-        <p class="jobs-credit">Jobs by <a href="https://www.adzuna.in/" target="_blank" rel="noopener">Adzuna</a></p>
+        <!-- Required by the Himalayas API terms: credit them as the source -->
+        <p class="jobs-credit">Jobs data from <a href="https://himalayas.app" target="_blank" rel="noopener">Himalayas</a></p>
       </div>
     </section>
   </main>
