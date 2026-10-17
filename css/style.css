@@ -960,6 +960,116 @@ body.dark-mode .score-pill { color: var(--teal); }
 
 .quick-actions { display: flex; flex-direction: column; gap: 10px; }
 
+/* GitHub profile card (dashboard) */
+.github-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.github-card-head h3 { margin-bottom: 0; }
+
+.github-status { color: var(--text-muted); font-size: 0.9rem; padding: 12px 0; }
+.github-status.error { color: var(--danger); font-weight: 600; }
+
+.github-empty { text-align: center; padding: 8px 0; }
+.github-empty p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; }
+
+.github-header { display: flex; gap: 16px; align-items: flex-start; }
+.github-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+.github-info { min-width: 0; }
+.github-name { font-size: 1rem; }
+.github-login { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); }
+.github-bio { font-size: 0.88rem; margin-top: 6px; color: var(--text); }
+.github-profile-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--teal-dark);
+}
+
+.github-stats { display: flex; gap: 12px; margin: 20px 0 0; }
+.github-stat {
+  flex: 1;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+}
+.github-stat-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--teal-dark);
+}
+.github-stat-label { font-size: 0.78rem; color: var(--text-muted); }
+
+.github-section { margin-top: 20px; }
+.github-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.github-muted { font-size: 0.85rem; color: var(--text-muted); }
+
+.github-languages { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+.github-lang-chip {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(16, 165, 178, 0.12);
+  color: var(--teal-dark);
+}
+
+.github-repos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+}
+.github-repo {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  min-width: 0;
+}
+.github-repo-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--teal-dark);
+  overflow-wrap: anywhere;
+}
+.github-repo-desc { font-size: 0.82rem; color: var(--text-muted); margin: 6px 0 8px; }
+.github-repo-meta {
+  display: flex;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.github-updated { margin-top: 18px; font-size: 0.76rem; color: var(--text-muted); text-align: right; }
+
+body.dark-mode .github-profile-link,
+body.dark-mode .github-repo-name,
+body.dark-mode .github-stat-num,
+body.dark-mode .github-lang-chip { color: var(--teal); }
+
+.label-optional { font-weight: 400; color: var(--text-muted); }
+
 /* Edit-profile inline form */
 .edit-profile-form { display: none; }
 .edit-profile-form.show { display: block; }
@@ -1037,3 +1147,73 @@ body.dark-mode .score-pill { color: var(--teal); }
   transform: translateY(-4px);
   box-shadow: var(--shadow-sm);
 }
+
+/* ---------- 28. JOBS PAGE ---------- */
+/* Search bar reuses .hero-search-bar; this just splits the two
+   inputs with a thin divider and styles the chips' active state. */
+.jobs-search { margin-bottom: 36px; }
+.jobs-search-bar .jobs-where { border-left: 1px solid var(--border); }
+.jobs-search-bar button:disabled { opacity: 0.7; cursor: wait; }
+
+.chip.active {
+  border-color: var(--teal);
+  background: rgba(16, 165, 178, 0.12);
+  color: var(--teal-dark);
+}
+body.dark-mode .chip.active { color: var(--teal); }
+
+.jobs-status { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 18px; min-height: 1.4em; }
+.jobs-status.error { color: var(--danger); font-weight: 600; }
+.jobs-status.empty { text-align: center; padding: 40px 0; }
+
+.jobs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+.job-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.job-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); border-color: var(--teal); }
+
+.job-card .tag {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--teal-dark);
+  background: rgba(16, 165, 178, 0.12);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+.job-card h3 { font-size: 1.02rem; margin-bottom: 6px; overflow-wrap: anywhere; }
+.job-company { font-weight: 600; font-size: 0.9rem; color: var(--teal-dark); margin-bottom: 14px; }
+
+.job-meta {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+/* margin-top: auto pins the Apply button to the bottom of the card,
+   so buttons line up across a row even when titles differ in length. */
+.job-apply { margin-top: auto; align-self: flex-start; }
+.job-apply-missing { margin-top: auto; font-size: 0.82rem; color: var(--text-muted); }
+
+.jobs-more { text-align: center; margin-top: 30px; }
+.jobs-credit { text-align: center; margin-top: 24px; font-size: 0.8rem; color: var(--text-muted); }
+.jobs-credit a { color: var(--teal-dark); font-weight: 600; }
+
+body.dark-mode .job-card .tag,
+body.dark-mode .job-company,
+body.dark-mode .jobs-credit a { color: var(--teal); }

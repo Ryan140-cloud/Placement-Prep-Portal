@@ -307,6 +307,7 @@ function setupLoginForm() {
         college: savedUser.college,
         course: savedUser.course,
         gradYear: savedUser.gradYear,
+        githubUsername: savedUser.githubUsername || "",
         loggedInAt: new Date().toISOString(),
       };
       localStorage.setItem("loggedInUser", JSON.stringify(session));

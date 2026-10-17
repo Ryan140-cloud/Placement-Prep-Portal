@@ -9,7 +9,7 @@
      6. Homepage search bar -> resources page
      7. Resources page search/filter
      8. Company preparation cards
-     9. Aptitude Mock Test (quiz widget)
+     9. Mock Tests: Aptitude + Coding Basics (shared quiz widget)
      10. Resource explore click tracking (for the Dashboard)
      11. Scroll reveal animations
      12. Animated stat counters
@@ -210,11 +210,12 @@ function setupCompanyCards() {
   });
 }
 
-/* ---------- 9. APTITUDE MOCK TEST (QUIZ WIDGET) ---------- */
-// A small, self-contained quiz: an array of question objects,
-// one shown at a time, a running score, and a result screen
-// at the end. Kept deliberately simple to stay explainable.
-const mockTestQuestions = [
+/* ---------- 9. MOCK TESTS (QUIZ WIDGET) ---------- */
+// One small quiz widget shared by every mock test: a list of
+// question objects, one shown at a time, a running score, and
+// a result screen at the end. Each test just hands the widget
+// its own name and questions. Kept simple to stay explainable.
+const aptitudeQuestions = [
   {
     question: "If a train travels 60 km in 1.5 hours, what is its speed?",
     options: ["30 km/h", "40 km/h", "45 km/h", "50 km/h"],
@@ -242,45 +243,248 @@ const mockTestQuestions = [
   },
 ];
 
+// Backup questions for the Coding Basics Test, used whenever
+// the online question bank can't be reached (offline, rate
+// limited, or any other error) so the test always works.
+const codingFallbackQuestions = [
+  {
+    question: "Which data structure works on the 'Last In, First Out' (LIFO) principle?",
+    options: ["Queue", "Stack", "Array", "Linked List"],
+    answerIndex: 1,
+  },
+  {
+    question: "What is the time complexity of binary search on a sorted array?",
+    options: ["O(n)", "O(n log n)", "O(log n)", "O(1)"],
+    answerIndex: 2,
+  },
+  {
+    question: "Which keyword is used to define a function in Python?",
+    options: ["func", "function", "define", "def"],
+    answerIndex: 3,
+  },
+  {
+    question: "In most programming languages, what index does the first element of an array have?",
+    options: ["0", "1", "-1", "It depends on the array size"],
+    answerIndex: 0,
+  },
+  {
+    question: "What does HTML stand for?",
+    options: ["Hyper Trainer Marking Language", "HyperText Markup Language", "HighText Machine Language", "Hyperlink and Text Management Language"],
+    answerIndex: 1,
+  },
+  {
+    question: "Which of these is NOT a loop in C or Java?",
+    options: ["for", "while", "do-while", "repeat-until"],
+    answerIndex: 3,
+  },
+  {
+    question: "What is the value of 7 % 3 (the modulus operator)?",
+    options: ["1", "2", "2.33", "0"],
+    answerIndex: 0,
+  },
+  {
+    question: "Which OOP concept means hiding internal details and exposing only what is needed?",
+    options: ["Inheritance", "Polymorphism", "Encapsulation", "Recursion"],
+    answerIndex: 2,
+  },
+  {
+    question: "What does SQL stand for?",
+    options: ["Structured Query Language", "Simple Question Language", "Sequential Query Logic", "Standard Quick Lookup"],
+    answerIndex: 0,
+  },
+  {
+    question: "A function that calls itself is called a...",
+    options: ["Loop function", "Recursive function", "Static function", "Lambda function"],
+    answerIndex: 1,
+  },
+];
+
+// Open Trivia DB: 10 multiple-choice questions from category 18
+// (Science: Computers). encode=url3986 means every string comes
+// URL-encoded, so we decode it with decodeURIComponent.
+const CODING_TEST_API_URL = "https://opentdb.com/api.php?amount=10&category=18&type=multiple&encode=url3986";
+const FETCH_TIMEOUT_MS = 8000; // give up on a slow network after 8 seconds
+const FEEDBACK_DELAY_MS = 800; // how long the green/red feedback stays before moving on
+
+// The test currently on screen, plus where the student is in it.
+let activeTest = { name: "", questions: [], note: "" };
 let currentQuestionIndex = 0;
 let mockTestScore = 0;
 
 function setupMockTest() {
-  const startBtn = document.getElementById("start-aptitude-test");
   const quizBox = document.getElementById("quiz-box");
-  if (!startBtn || !quizBox) return;
+  if (!quizBox) return;
 
-  startBtn.addEventListener("click", function () {
-    currentQuestionIndex = 0;
-    mockTestScore = 0;
-    quizBox.classList.add("show");
-    renderQuestion();
-    quizBox.scrollIntoView({ behavior: "smooth", block: "center" });
+  const aptitudeBtn = document.getElementById("start-aptitude-test");
+  if (aptitudeBtn) {
+    aptitudeBtn.addEventListener("click", function () {
+      startQuiz("Aptitude", aptitudeQuestions, "");
+    });
+  }
+
+  const codingBtn = document.getElementById("start-coding-test");
+  if (codingBtn) {
+    codingBtn.addEventListener("click", function () {
+      startCodingTest(codingBtn);
+    });
+  }
+}
+
+// Resets the score and shows question 1 of the given test.
+function startQuiz(testName, questions, note) {
+  const quizBox = document.getElementById("quiz-box");
+  activeTest = { name: testName, questions: questions, note: note };
+  currentQuestionIndex = 0;
+  mockTestScore = 0;
+  quizBox.classList.add("show");
+  renderQuestion();
+  quizBox.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+// Shows a single line of text (like "Loading questions...")
+// inside the quiz box in place of a question.
+function showQuizMessage(message) {
+  const quizBox = document.getElementById("quiz-box");
+  const messageEl = document.createElement("p");
+  messageEl.className = "quiz-progress";
+  messageEl.textContent = message;
+  quizBox.replaceChildren(messageEl);
+  quizBox.classList.add("show");
+}
+
+// Fetches the coding questions, falling back to the built-in
+// ones if anything goes wrong. The button is disabled while
+// loading so it can't be double-clicked.
+async function startCodingTest(startBtn) {
+  const originalText = startBtn.textContent;
+  startBtn.disabled = true;
+  startBtn.textContent = "Loading questions...";
+  showQuizMessage("Loading questions...");
+
+  let questions = codingFallbackQuestions;
+  let note = "";
+
+  try {
+    questions = await fetchCodingQuestions();
+  } catch (error) {
+    console.warn("Coding Basics Test: using built-in questions.", error);
+    note = "Couldn't reach the online question bank, so these are our built-in questions.";
+  } finally {
+    startBtn.disabled = false;
+    startBtn.textContent = originalText;
+  }
+
+  startQuiz("Coding Basics", questions, note);
+}
+
+async function fetchCodingQuestions() {
+  // AbortController lets us cancel the request if it takes too long.
+  const controller = new AbortController();
+  const timer = setTimeout(function () {
+    controller.abort();
+  }, FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(CODING_TEST_API_URL, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    // response_code 0 = success. Anything else (e.g. 5 = too many
+    // requests, the API allows 1 every 5 seconds) means no questions.
+    if (data.response_code !== 0 || !Array.isArray(data.results) || data.results.length === 0) {
+      throw new Error("Open Trivia DB response_code " + data.response_code);
+    }
+
+    return data.results.map(toQuizQuestion);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Turns one API result into our { question, options, answerIndex }
+// shape: mix the right answer in with the wrong ones, shuffle,
+// then remember where the right answer ended up.
+function toQuizQuestion(item) {
+  const correctAnswer = decodeURIComponent(item.correct_answer);
+  const wrongAnswers = item.incorrect_answers.map(function (answer) {
+    return decodeURIComponent(answer);
   });
+  const options = shuffleArray([correctAnswer].concat(wrongAnswers));
+
+  return {
+    question: decodeURIComponent(item.question),
+    options: options,
+    answerIndex: options.indexOf(correctAnswer),
+  };
+}
+
+// Fisher-Yates shuffle on a copy, so the original array is untouched.
+function shuffleArray(items) {
+  const copy = items.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = copy[i];
+    copy[i] = copy[j];
+    copy[j] = temp;
+  }
+  return copy;
+}
+
+// Small helper: makes an element with a class and plain text.
+// textContent (not innerHTML) means text from the API can never
+// be run as HTML on our page.
+function createTextElement(tagName, className, text) {
+  const el = document.createElement(tagName);
+  el.className = className;
+  el.textContent = text;
+  return el;
 }
 
 function renderQuestion() {
   const quizBox = document.getElementById("quiz-box");
-  const question = mockTestQuestions[currentQuestionIndex];
+  const questions = activeTest.questions;
+  const question = questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  let optionsHtml = "";
+  const parts = [];
+
+  // Only shown on question 1, e.g. when the backup questions are used.
+  if (activeTest.note && currentQuestionIndex === 0) {
+    const noteEl = createTextElement("p", "quiz-progress", activeTest.note);
+    noteEl.style.color = "var(--text-muted)";
+    parts.push(noteEl);
+  }
+
+  parts.push(createTextElement("p", "quiz-progress", "Question " + (currentQuestionIndex + 1) + " of " + questions.length));
+  parts.push(createTextElement("h3", "quiz-question", question.question));
+
+  const optionsWrap = document.createElement("div");
+  optionsWrap.className = "quiz-options";
   question.options.forEach(function (option, index) {
-    optionsHtml +=
-      '<label class="quiz-option">' +
-      '<input type="radio" name="quizOption" value="' + index + '">' +
-      option +
-      "</label>";
+    const label = document.createElement("label");
+    label.className = "quiz-option";
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "quizOption";
+    input.value = index;
+
+    label.appendChild(input);
+    label.appendChild(document.createTextNode(option));
+    optionsWrap.appendChild(label);
   });
+  parts.push(optionsWrap);
 
-  quizBox.innerHTML =
-    '<p class="quiz-progress">Question ' + (currentQuestionIndex + 1) + " of " + mockTestQuestions.length + '</p>' +
-    '<h3 class="quiz-question">' + question.question + '</h3>' +
-    '<div class="quiz-options">' + optionsHtml + '</div>' +
-    '<button class="btn btn-primary btn-block" id="quiz-next-btn">' +
-    (currentQuestionIndex === mockTestQuestions.length - 1 ? "Submit" : "Next") +
-    '</button>';
+  const nextBtn = createTextElement("button", "btn btn-primary btn-block", isLastQuestion ? "Submit" : "Next");
+  nextBtn.id = "quiz-next-btn";
+  parts.push(nextBtn);
 
-  document.getElementById("quiz-next-btn").addEventListener("click", handleNextQuestion);
+  quizBox.replaceChildren.apply(quizBox, parts);
+
+  nextBtn.addEventListener("click", handleNextQuestion);
 
   // Give the option under the mouse a "selected" highlight the
   // moment it's picked — before Next/Submit is even clicked.
@@ -303,7 +507,7 @@ function handleNextQuestion() {
   }
 
   const chosenIndex = parseInt(selected.value);
-  const correctIndex = mockTestQuestions[currentQuestionIndex].answerIndex;
+  const correctIndex = activeTest.questions[currentQuestionIndex].answerIndex;
   const isCorrect = chosenIndex === correctIndex;
 
   if (isCorrect) {
@@ -331,26 +535,29 @@ function handleNextQuestion() {
   setTimeout(function () {
     currentQuestionIndex++;
 
-    if (currentQuestionIndex < mockTestQuestions.length) {
+    if (currentQuestionIndex < activeTest.questions.length) {
       renderQuestion();
     } else {
       renderResult();
     }
-  }, 800);
+  }, FEEDBACK_DELAY_MS);
 }
 
 function renderResult() {
-  saveMockTestAttempt(mockTestScore, mockTestQuestions.length);
+  const total = activeTest.questions.length;
+  saveMockTestAttempt(activeTest.name, mockTestScore, total);
 
+  // Only numbers we calculated ourselves go into this HTML.
   const quizBox = document.getElementById("quiz-box");
   quizBox.innerHTML =
     '<div class="quiz-result">' +
     '<p class="quiz-progress">Test Complete</p>' +
-    '<p class="score-num">' + mockTestScore + " / " + mockTestQuestions.length + '</p>' +
-    '<p style="margin: 12px 0 22px; color: var(--text-muted);">You answered ' + mockTestScore + ' out of ' + mockTestQuestions.length + ' questions correctly.</p>' +
+    '<p class="score-num">' + mockTestScore + " / " + total + '</p>' +
+    '<p style="margin: 12px 0 22px; color: var(--text-muted);">You answered ' + mockTestScore + ' out of ' + total + ' questions correctly.</p>' +
     '<button class="btn btn-outline" id="quiz-retry-btn">Retry Test</button>' +
     '</div>';
 
+  // Retry runs the same questions again (no new download needed).
   document.getElementById("quiz-retry-btn").addEventListener("click", function () {
     currentQuestionIndex = 0;
     mockTestScore = 0;
@@ -362,11 +569,12 @@ function renderResult() {
 // array, so the Dashboard page can show mock test history and
 // compute a best/average score. Only the 10 most recent
 // attempts are kept, newest first.
-function saveMockTestAttempt(score, total) {
+function saveMockTestAttempt(testName, score, total) {
   const history = JSON.parse(localStorage.getItem("mockTestHistory")) || [];
 
   history.unshift({
     date: new Date().toLocaleDateString(),
+    test: testName,
     score: score,
     total: total,
   });
