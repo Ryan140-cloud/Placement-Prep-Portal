@@ -298,97 +298,366 @@ body.dark-mode .btn-outline { color: var(--text); }
   align-items: center;
 }
 
-.hero-text h1 {
-  font-size: clamp(2.1rem, 4.6vw, 3.2rem);
-  margin-bottom: 18px;
-  color: #ffffff;
-}
-.hero-text h1 .accent-word { color: var(--orange); }
-
-.hero-text p {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 1.08rem;
-  max-width: 480px;
-  margin-bottom: 30px;
-}
-
+/* Shared with the dashboard header and the CTA section. */
 .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
 
-/* Signature visual: a preparation "dashboard" card, since the
-   product's real job is tracking a student's prep progress. */
-.hero-visual {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 26px;
-}
+/* --- Hero text column --- */
+/* The hero is navy in both themes, so its text is always white
+   (the dark-mode selector stops the site-wide dark h1 colour
+   from changing the headline). */
 
-.dash-head {
-  display: flex;
-  justify-content: space-between;
+/* Small pill badge with a pulsing dot */
+.hero-badge {
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 10px;
+  padding: 6px 14px 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
   font-family: var(--font-mono);
-  font-size: 0.74rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 22px;
 }
-
-.dash-ring {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 18px;
-}
-
-.ring {
-  width: 64px;
-  height: 64px;
+.hero-badge-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: conic-gradient(var(--teal) 0% 68%, var(--border) 68% 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: var(--teal);
   flex-shrink: 0;
 }
-.ring span {
-  width: 48px;
-  height: 48px;
+/* The "ripple" ring behind the dot (animated further down) */
+.hero-badge-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
+  background: var(--teal);
+  opacity: 0;
+}
+
+.hero-text h1 {
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 22px;
+  color: #ffffff;
+}
+body.dark-mode .hero-text h1 { color: #ffffff; }
+.hero-line { display: block; } /* one line per phrase */
+.hero-text h1 .accent-word { color: var(--orange); }
+
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.08rem;
+  max-width: 500px;
+  margin-bottom: 18px;
+}
+.hero-subtitle strong { color: var(--teal); font-weight: 600; }
+
+/* "Currently preparing for ____|" — the word is typed by main.js */
+.hero-typing {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 30px;
+  min-height: 1.6em; /* stops the line jumping while a word is deleted */
+}
+.typing-text { color: var(--orange); font-weight: 700; }
+.typing-text::after {
+  content: "|";
+  margin-left: 2px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Buttons: one big primary button, then a row underneath */
+.hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.hero-btn-main { padding: 17px 34px; font-size: 1.02rem; }
+.hero-cta-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+
+/* White outline button on the navy background (was an inline style) */
+.hero .btn-outline,
+body.dark-mode .hero .btn-outline {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+.hero .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+.hero-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+.hero-text-link svg { transition: transform 0.2s ease; }
+.hero-text-link:hover { color: var(--teal); }
+.hero-text-link:hover svg { transform: translateX(3px); }
+
+/* Trust row, then a thin divider (the border), then feature pills */
+.hero-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.6);
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.hero-trust li,
+.hero-features li { display: inline-flex; align-items: center; gap: 7px; }
+.hero-trust svg,
+.hero-features svg { color: var(--teal); flex-shrink: 0; }
+
+.hero-features { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero-features li {
+  padding: 7px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Hero visual: mock "practice interview" window --- */
+/* Uses the theme variables, so it turns dark in dark mode just
+   like the old dashboard card did. Floating cards are placed
+   with position: absolute relative to .hero-visual. */
+.hero-visual { position: relative; }
+
+.mock-window {
   background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.mock-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.mock-dots { display: flex; gap: 6px; flex-shrink: 0; }
+.mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-red { background: var(--danger); }
+.dot-orange { background: var(--orange); }
+.dot-teal { background: var(--teal); }
+.mock-url {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mock-tabs { display: flex; gap: 6px; padding: 12px 16px 0; }
+.mock-tab {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--text-muted);
+}
+.mock-tab.active { background: rgba(16, 165, 178, 0.12); color: var(--teal-dark); }
+
+.mock-body { display: flex; flex-direction: column; gap: 14px; padding: 18px 16px 8px; }
+.mock-bubble {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.mock-question { max-width: 88%; border-top-left-radius: 4px; }
+/* padding-left keeps an empty strip where the floating Feedback
+   card overlaps, so the card never covers the answer text. */
+.mock-answer-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 10px;
+  padding-left: 84px;
+}
+.mock-answer {
+  min-width: 0;
+  border-bottom-right-radius: 4px;
+  background: rgba(16, 165, 178, 0.08);
+}
+.mock-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal-dark);
+  margin-bottom: 4px;
+}
+.mock-answer .mock-label { color: var(--text-muted); }
+.mock-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
+  background: var(--teal);
+  color: #ffffff;
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--navy);
+  font-size: 0.8rem;
 }
-body.dark-mode .ring span { color: var(--text); }
 
-.dash-ring h4 { font-size: 1rem; margin-bottom: 4px; }
-.dash-ring p { font-size: 0.85rem; color: var(--text-muted); }
-
-.dash-row {
+.mock-footer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  font-size: 0.88rem;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
 }
-.dash-row span:first-child { color: var(--text-muted); }
-.dash-row .tag {
+/* 4 bars; each has its own resting height (used when motion is off) */
+.sound-wave { display: inline-flex; align-items: center; gap: 3px; height: 16px; }
+.sound-wave span {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--teal);
+}
+.sound-wave span:nth-child(1) { transform: scaleY(0.45); }
+.sound-wave span:nth-child(2) { transform: scaleY(0.9); }
+.sound-wave span:nth-child(3) { transform: scaleY(0.6); }
+.sound-wave span:nth-child(4) { transform: scaleY(0.8); }
+
+/* Floating cards around the window */
+.float-card {
+  position: absolute;
+  z-index: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 10px 14px;
+}
+
+/* -12px: sticks out past the window, but stays inside the page's
+   24px side padding at every screen width. */
+.float-score { top: -26px; right: -12px; width: 170px; }
+.float-label {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  padding: 2px 9px;
-  border-radius: 999px;
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
-.tag-done { background: rgba(16, 165, 178, 0.14); color: var(--teal-dark); }
-.tag-pending { background: rgba(245, 165, 36, 0.16); color: var(--orange); }
-body.dark-mode .tag-done { color: var(--teal); }
+.score-line {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin: 2px 0 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.score-line strong {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--text);
+}
+.score-track { height: 5px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.score-fill { width: 82%; height: 100%; border-radius: 999px; background: var(--teal); }
+
+.float-feedback { left: -56px; top: 60%; display: flex; align-items: center; gap: 10px; }
+.float-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 165, 178, 0.12);
+  color: var(--teal);
+}
+.float-text { display: flex; flex-direction: column; line-height: 1.3; }
+.float-text strong { font-size: 0.82rem; color: var(--text); }
+.analyzing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+.bounce-dots { display: inline-flex; gap: 2px; }
+.bounce-dots span { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); }
+
+.float-ready {
+  bottom: -20px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--teal-dark);
+}
+
+body.dark-mode .mock-tab.active,
+body.dark-mode .mock-label,
+body.dark-mode .float-ready { color: var(--teal); }
+body.dark-mode .mock-answer .mock-label { color: var(--text-muted); }
+
+/* --- Hero animations: only when the visitor hasn't asked for
+   reduced motion. With reduce, everything stays still. --- */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-badge-dot::after { animation: heroPulse 1.8s ease-out infinite; }
+  .typing-text::after { animation: heroBlink 1s steps(1) infinite; }
+
+  .bounce-dots span { animation: heroBounce 1.2s ease-in-out infinite; }
+  .bounce-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .bounce-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+  .sound-wave span { animation: heroWave 1s ease-in-out infinite; }
+  .sound-wave span:nth-child(2) { animation-delay: 0.15s; }
+  .sound-wave span:nth-child(3) { animation-delay: 0.3s; }
+  .sound-wave span:nth-child(4) { animation-delay: 0.45s; }
+
+  .score-fill { transition: width 1.4s ease; }
+}
+
+@keyframes heroPulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+@keyframes heroBlink { 50% { opacity: 0; } }
+@keyframes heroBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+@keyframes heroWave {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
 
 /* ---------- 7. SEARCH SECTION ---------- */
 .search-section { padding: 60px 0 20px; }

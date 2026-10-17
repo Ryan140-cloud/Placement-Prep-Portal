@@ -15,6 +15,7 @@
      12. Animated stat counters
      13. Navbar scroll state
      14. Button ripple effect
+     15. Hero typing effect + score counter (homepage)
    ===================================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -32,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setupStatCounters();
   setupNavbarScroll();
   setupButtonRipple();
+  setupHeroAnimations();
 });
 
 /* ---------- 1. LOADING SCREEN ---------- */
@@ -721,4 +723,111 @@ function setupButtonRipple() {
       }, 600);
     });
   });
+}
+
+/* ---------- 15. HERO TYPING EFFECT + SCORE COUNTER ---------- */
+// Homepage hero only. Types company/role names one letter at a
+// time ("Currently preparing for TCS NQT|"), and counts the
+// "Readiness Score" card up from 0 while its bar fills.
+const HERO_TYPING_WORDS = [
+  "TCS NQT",
+  "Infosys",
+  "Wipro",
+  "Accenture",
+  "Cognizant",
+  "Capgemini",
+  "Software Engineer",
+  "Data Analyst",
+];
+const TYPE_LETTER_MS = 90; // time between typed letters
+const DELETE_LETTER_MS = 45; // deleting is a bit faster
+const HOLD_WORD_MS = 1500; // pause on the full word
+const NEXT_WORD_MS = 400; // pause before typing the next word
+const SCORE_COUNT_MS = 1400; // how long the score takes to count up
+const LOADING_SCREEN_MS = 800; // section 1 hides the loading screen about this long after load
+
+function setupHeroAnimations() {
+  const typingEl = document.getElementById("typing-text");
+  if (!typingEl) return; // not the homepage
+
+  // Respect the visitor's "reduce motion" setting: show the
+  // finished state straight away instead of animating.
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReducedMotion) {
+    typingEl.textContent = HERO_TYPING_WORDS[0];
+    showHeroScore(false);
+    return;
+  }
+
+  startTypingLoop(typingEl);
+
+  // Wait for the loading screen to fade so the count-up is visible.
+  if (document.readyState === "complete") {
+    showHeroScore(true);
+  } else {
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        showHeroScore(true);
+      }, LOADING_SCREEN_MS);
+    });
+  }
+}
+
+// Types a word, holds it, deletes it, then moves to the next
+// word, forever. Each step schedules the next with setTimeout.
+function startTypingLoop(el) {
+  let wordIndex = 0;
+  let letterCount = 0;
+  let isDeleting = false;
+
+  function step() {
+    const word = HERO_TYPING_WORDS[wordIndex];
+    letterCount += isDeleting ? -1 : 1;
+    el.textContent = word.slice(0, letterCount);
+
+    let delay = isDeleting ? DELETE_LETTER_MS : TYPE_LETTER_MS;
+
+    if (!isDeleting && letterCount === word.length) {
+      isDeleting = true; // whole word typed: hold, then delete
+      delay = HOLD_WORD_MS;
+    } else if (isDeleting && letterCount === 0) {
+      isDeleting = false; // word gone: move on to the next one
+      wordIndex = (wordIndex + 1) % HERO_TYPING_WORDS.length;
+      delay = NEXT_WORD_MS;
+    }
+
+    setTimeout(step, delay);
+  }
+
+  step();
+}
+
+// Sets the score card to its target (82, read from data-target).
+// With animate = true it counts up and the bar grows (the CSS
+// transition on .score-fill does the smooth growing).
+function showHeroScore(animate) {
+  const scoreEl = document.getElementById("hero-score");
+  const fillEl = document.getElementById("hero-score-fill");
+  if (!scoreEl || !fillEl) return;
+
+  const target = parseInt(scoreEl.dataset.target) || 0;
+
+  if (!animate) {
+    scoreEl.textContent = target;
+    fillEl.style.width = target + "%";
+    return;
+  }
+
+  scoreEl.textContent = "0";
+  fillEl.style.width = "0%";
+  void fillEl.offsetWidth; // let the browser register 0% first, so the transition plays
+  fillEl.style.width = target + "%";
+
+  const startTime = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - startTime) / SCORE_COUNT_MS, 1);
+    scoreEl.textContent = Math.round(target * progress);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }

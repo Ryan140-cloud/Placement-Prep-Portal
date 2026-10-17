@@ -10,9 +10,6 @@
 
 /* ---------- TABLET (1024px and below) ---------- */
 @media (max-width: 1024px) {
-  .hero-inner { grid-template-columns: 1fr; }
-  .hero-visual { order: -1; max-width: 460px; }
-
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .categories-grid { grid-template-columns: repeat(2, 1fr); }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
@@ -30,6 +27,16 @@
   .dashboard-grid { grid-template-columns: 1fr; }
   /* The GitHub card is full width here, so fit 3 repos per row. */
   .github-repos { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---------- HERO STACKS (960px and below) ---------- */
+/* Text first, then the mock interview card, centred. The floating
+   cards tuck in closer so they stay inside the screen. */
+@media (max-width: 960px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 64px; }
+  .hero-visual { width: 100%; max-width: 520px; margin: 0 auto; }
+  .float-feedback { left: -16px; }
+  .mock-answer-row { padding-left: 124px; } /* card sits further inside now */
 }
 
 /* ---------- MOBILE NAV (900px and below) ---------- */
@@ -71,6 +78,21 @@
   .github-repos { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* ---------- HERO ON PHONES (600px and below) ---------- */
+/* Full-width buttons, no Feedback card, and the floating cards sit
+   fully inside the window so nothing scrolls sideways. */
+@media (max-width: 600px) {
+  .hero-cta { align-items: stretch; }
+  .hero-cta .btn { width: 100%; }
+  .hero-cta-row { flex-direction: column; align-items: stretch; gap: 12px; }
+  .hero-text-link { justify-content: center; padding: 6px 0; }
+
+  .float-feedback { display: none; }
+  .mock-answer-row { padding-left: 24px; } /* no Feedback card to make room for */
+  .float-score { top: -30px; right: 10px; width: 150px; }
+  .float-ready { right: 14px; }
+}
+
 /* ---------- MOBILE (480px and below) ---------- */
 @media (max-width: 480px) {
   .container { padding: 0 18px; }
@@ -80,7 +102,8 @@
      outline-styled) visible for logged-in users. */
   .nav-actions .guest-only.nav-btn-outline { display: none; }
 
-  .hero-text h1 { font-size: 1.9rem; }
+  /* Small enough that each of the three headline lines fits on one row */
+  .hero-text h1 { font-size: 2.1rem; }
   .hero-actions .btn { width: 100%; }
 
   .stats-grid { grid-template-columns: 1fr; gap: 16px; }
