@@ -1,16 +1,28 @@
 /* =====================================================
    CONTACT.JS
-   Validates and "submits" the Contact Us form. Since there
-   is no backend, the message is saved into localStorage
-   (so a real submission really is captured) and a success
-   message is shown on screen.
+   Validates the Contact Us form, then really sends it as an
+   email using Web3Forms (a free form-to-email service — the
+   site itself still has no backend of its own). A copy of
+   every message is also saved in localStorage as a backup.
+
+   Setup: paste your Web3Forms access key below. The key is
+   meant to be public (it can only send mail to *your* inbox),
+   so it's fine to keep it in frontend code.
    ===================================================== */
+
+const WEB3FORMS_ACCESS_KEY = "40c7cddc-4ae5-4ce8-8272-d27f49a7db80";
+const WEB3FORMS_URL = "https://api.web3forms.com/submit";
+const SUCCESS_HIDE_MS = 4000; // how long the success message stays visible
+
+// Remembers the "hide the success message" timer, so an old
+// timer can't hide a newer message.
+let contactMessageTimer = null;
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("contact-form");
   if (!form) return;
 
-  form.addEventListener("submit", function (event) {
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     let isFormValid = true;
@@ -53,19 +65,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!isFormValid) return;
 
+    // Backup copy first, so the message is kept even if sending fails.
     const allMessages = JSON.parse(localStorage.getItem("contactMessages")) || [];
     allMessages.push({ name, email, phone, subject, message, date: new Date().toLocaleString() });
     localStorage.setItem("contactMessages", JSON.stringify(allMessages));
 
-    const successBox = document.getElementById("contact-success");
-    successBox.textContent = "Thank you! Your message has been submitted successfully.";
-    successBox.classList.add("show");
+    if (WEB3FORMS_ACCESS_KEY === "PASTE_MY_KEY_HERE") {
+      showContactStatus("The contact form isn't set up yet (missing Web3Forms access key).", true);
+      return;
+    }
 
-    form.reset();
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+    hideContactStatus();
 
-    setTimeout(function () {
-      successBox.classList.remove("show");
-    }, 4000);
+    const payload = {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      name: name,
+      email: email,
+      phone: phone,
+      subject: subject,
+      message: message,
+      from_name: "Placement Prep Portal",
+    };
+
+    // Honeypot: real people never see this checkbox, so if it's
+    // ticked a bot filled in the form. Passing it on lets
+    // Web3Forms reject the submission as spam.
+    if (form.elements.botcheck && form.elements.botcheck.checked) {
+      payload.botcheck = true;
+    }
+
+    try {
+      const response = await fetch(WEB3FORMS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+
+      if (result.success === true) {
+        showContactStatus("Thank you! Your message has been submitted successfully.", false);
+        form.reset();
+      } else {
+        // Web3Forms explains what went wrong in result.message.
+        const reason = result.message ? " (" + result.message + ")" : "";
+        showContactStatus("Sorry, your message could not be sent" + reason + ". Please try again.", true);
+      }
+    } catch (error) {
+      // fetch() throws when offline; .json() throws on a non-JSON reply.
+      showContactStatus("Could not reach the email service. Check your connection and try again.", true);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
+    }
   });
 
   form.addEventListener("reset", function () {
@@ -73,6 +131,30 @@ document.addEventListener("DOMContentLoaded", function () {
       .forEach(clearContactError);
   });
 });
+
+// Shows a message in the box above the form. Success messages
+// fade away after a few seconds; error messages stay put so the
+// user can read them. textContent keeps it plain text.
+function showContactStatus(text, isError) {
+  const statusBox = document.getElementById("contact-success");
+  if (!statusBox) return;
+
+  clearTimeout(contactMessageTimer);
+  statusBox.textContent = text;
+  statusBox.classList.toggle("error", isError);
+  statusBox.classList.add("show");
+
+  if (!isError) {
+    contactMessageTimer = setTimeout(hideContactStatus, SUCCESS_HIDE_MS);
+  }
+}
+
+function hideContactStatus() {
+  const statusBox = document.getElementById("contact-success");
+  if (!statusBox) return;
+  clearTimeout(contactMessageTimer);
+  statusBox.classList.remove("show", "error");
+}
 
 function showContactError(inputId, message) {
   const input = document.getElementById(inputId);

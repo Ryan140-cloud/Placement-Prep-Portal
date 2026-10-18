@@ -64,6 +64,17 @@
 .form-success.show { display: block; }
 body.dark-mode .form-success { color: var(--teal); }
 
+/* Same box, used when the contact form fails to send */
+.form-success.error,
+body.dark-mode .form-success.error {
+  background: rgba(214, 69, 80, 0.1);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Web3Forms honeypot checkbox — hidden from real visitors */
+.botcheck { display: none !important; }
+
 /* ---------- Auth cards (login / signup) ---------- */
 .auth-section {
   min-height: 100vh;

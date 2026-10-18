@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jobs &amp; Internships | Placement Prep Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/forms.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+</head>
+<body data-page="jobs">
+
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading Placement Prep Portal...</p>
+  </div>
+
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-mark">PP</span>
+        Placement Prep Portal
+      </a>
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="../index.html" data-page="home">Home</a></li>
+          <li><a href="resources.html" data-page="resources">Resources</a></li>
+          <li><a href="jobs.html" data-page="jobs">Jobs</a></li>
+          <li><a href="about.html" data-page="about">About Us</a></li>
+          <li><a href="contact.html" data-page="contact">Contact Us</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+        <a href="login.html" class="nav-btn nav-btn-outline guest-only">Sign In</a>
+        <a href="signup.html" class="nav-btn nav-btn-solid guest-only">Sign Up</a>
+        <a href="dashboard.html" class="nav-btn nav-btn-outline member-only">Dashboard</a>
+        <a href="#" class="nav-btn nav-btn-solid logout-btn member-only">Logout</a>
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-offset">
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Opportunities</p>
+          <h2>Jobs &amp; Internships</h2>
+          <p>Remote jobs open to candidates in India.</p>
+        </div>
+
+        <!-- Search + filters. Results come from /api/jobs (api/jobs.js),
+             which fetches them from the Himalayas jobs API. -->
+        <form class="jobs-search" id="jobs-search-form" role="search">
+          <div class="hero-search-bar jobs-search-bar">
+            <label for="jobs-q" class="visually-hidden">Job title or keyword</label>
+            <input type="text" id="jobs-q" name="q" placeholder="Role or keyword (e.g. frontend)" maxlength="60" autocomplete="off" />
+            <button type="submit" id="jobs-search-btn">Search</button>
+          </div>
+          <div class="search-chips" role="group" aria-label="Quick filters">
+            <button type="button" class="chip job-filter-chip" data-filter="type" data-value="Intern" aria-pressed="false">Internships</button>
+            <button type="button" class="chip job-filter-chip" data-filter="seniority" data-value="Entry-level" aria-pressed="false">Freshers</button>
+            <button type="button" class="chip job-keyword-chip" data-keyword="Software" aria-pressed="false">Software</button>
+            <button type="button" class="chip job-keyword-chip" data-keyword="Data" aria-pressed="false">Data</button>
+            <button type="button" class="chip job-keyword-chip" data-keyword="Design" aria-pressed="false">Design</button>
+          </div>
+        </form>
+
+        <p class="jobs-status" id="jobs-status" role="status" aria-live="polite"></p>
+
+        <!-- Job cards are added here by js/jobs.js -->
+        <div class="jobs-grid" id="jobs-grid"></div>
+
+        <div class="jobs-more">
+          <button type="button" class="btn btn-outline" id="jobs-load-more" hidden>Load more</button>
+        </div>
+
+        <!-- Required by the Himalayas API terms: credit them as the source -->
+        <p class="jobs-credit">Jobs data from <a href="https://himalayas.app" target="_blank" rel="noopener">Himalayas</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="logo">
+            <span class="logo-mark">PP</span>
+            Placement Prep Portal
+          </a>
+          <p>A single platform to prepare for campus placements — aptitude, coding, DSA and interviews, all in one place.</p>
+          <div class="social-row">
+            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Twitter">tw</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="signup.html">Sign Up</a></li>
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="#" class="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>support@placementprep.edu</li>
+            <li>+91 98765 43210</li>
+            <li>Chitkara University, Punjab</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Placement Prep Portal</p>
+        <div class="legal-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms &amp; Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/jobs.js"></script>
+</body>
+</html>

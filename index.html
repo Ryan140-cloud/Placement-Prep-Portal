@@ -34,6 +34,7 @@
         <ul class="nav-links" id="nav-links">
           <li><a href="index.html" data-page="home">Home</a></li>
           <li><a href="pages/resources.html" data-page="resources">Resources</a></li>
+          <li><a href="pages/jobs.html" data-page="jobs">Jobs</a></li>
           <li><a href="pages/about.html" data-page="about">About Us</a></li>
           <li><a href="pages/contact.html" data-page="contact">Contact Us</a></li>
         </ul>
@@ -57,43 +58,122 @@
     <section class="hero">
       <div class="container hero-inner">
         <div class="hero-text">
-          <p class="eyebrow" style="color:#5fd6df;">Campus Placement Prep</p>
-          <h1>Prepare Today. <span class="accent-word">Get Placed</span> Tomorrow.</h1>
-          <p>Build the skills, practice the questions and prepare confidently for your next placement — aptitude, coding, DSA and interviews, all on one platform.</p>
-          <div class="hero-actions">
-            <a href="pages/signup.html" class="btn btn-primary guest-only">Create Your Account</a>
-            <a href="pages/dashboard.html" class="btn btn-primary member-only">Go to Dashboard</a>
-            <a href="pages/resources.html" class="btn btn-outline" style="border-color:rgba(255,255,255,0.35); color:#fff;">Explore Resources</a>
-          </div>
-        </div>
+          <p class="hero-badge"><span class="hero-badge-dot"></span>Placement Prep Portal · Smart Practice</p>
 
-        <div class="hero-visual" aria-hidden="true">
-          <div class="dash-head">
-            <span>Your Prep Dashboard</span>
-            <span>Week 3</span>
-          </div>
-          <div class="dash-ring">
-            <div class="ring"><span>68%</span></div>
-            <div>
-              <h4>Overall Readiness</h4>
-              <p>Across all 4 preparation paths</p>
+          <h1>
+            <span class="hero-line">Practice Smart.</span>
+            <span class="hero-line">Crack Interviews.</span>
+            <span class="hero-line accent-word">Get Placed.</span>
+          </h1>
+
+          <p class="hero-subtitle">Aptitude, coding, DSA, <strong>mock tests</strong> and <strong>interview prep</strong> in one free platform, built for campus placement drives.</p>
+
+          <!-- The company/role name is typed out by js/main.js (section 15).
+               Screen readers get the plain sentence instead. -->
+          <p class="hero-typing">
+            Currently preparing for
+            <span id="typing-text" class="typing-text" aria-hidden="true"></span>
+            <span class="visually-hidden">companies like TCS, Infosys, Wipro and Accenture</span>
+          </p>
+
+          <div class="hero-cta">
+            <a href="#mock-tests" class="btn btn-primary hero-btn-main">Start Free Mock Test <span aria-hidden="true">→</span></a>
+            <div class="hero-cta-row">
+              <a href="pages/dashboard.html" class="btn btn-outline member-only">Check Your Readiness</a>
+              <a href="pages/signup.html" class="btn btn-outline guest-only">Check Your Readiness</a>
+              <a href="pages/resources.html" class="hero-text-link">
+                Explore Resources
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
             </div>
           </div>
-          <div class="dash-row">
-            <span>Aptitude & Reasoning</span>
-            <span class="tag tag-done">DONE</span>
+
+          <ul class="hero-trust">
+            <li>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              100% free
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              No credit card
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>
+              Progress saved on your device
+            </li>
+          </ul>
+
+          <ul class="hero-features">
+            <li>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+              Aptitude
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>
+              Coding &amp; DSA
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Interview Prep
+            </li>
+          </ul>
+        </div>
+
+        <!-- Decorative mock "practice interview" window (hidden from
+             screen readers). Text colours come from the theme variables. -->
+        <div class="hero-visual" aria-hidden="true">
+          <div class="mock-window">
+            <div class="mock-bar">
+              <span class="mock-dots"><span class="mock-dot dot-red"></span><span class="mock-dot dot-orange"></span><span class="mock-dot dot-teal"></span></span>
+              <span class="mock-url">placementprep.app/mock-interview</span>
+            </div>
+
+            <div class="mock-tabs">
+              <span class="mock-tab active">Interview</span>
+              <span class="mock-tab">Analysis</span>
+              <span class="mock-tab">Report</span>
+            </div>
+
+            <div class="mock-body">
+              <div class="mock-bubble mock-question">
+                <span class="mock-label">Practice Interviewer</span>
+                <p>Tell me about a project where you improved performance. What was your approach?</p>
+              </div>
+
+              <div class="mock-answer-row">
+                <div class="mock-bubble mock-answer">
+                  <span class="mock-label">Your Answer</span>
+                  <p>I found a slow database query using profiling, added the right index, and cut load time by half...</p>
+                </div>
+                <span class="mock-avatar">Y</span>
+              </div>
+            </div>
+
+            <div class="mock-footer">
+              <span class="sound-wave"><span></span><span></span><span></span><span></span></span>
+              <span>Checking your answer...</span>
+            </div>
           </div>
-          <div class="dash-row">
-            <span>Coding & DSA</span>
-            <span class="tag tag-pending">IN PROGRESS</span>
+
+          <div class="float-card float-score">
+            <span class="float-label">Readiness Score</span>
+            <p class="score-line"><strong id="hero-score" data-target="82">82</strong> <span>/100</span></p>
+            <div class="score-track"><div class="score-fill" id="hero-score-fill"></div></div>
           </div>
-          <div class="dash-row">
-            <span>Interview Prep</span>
-            <span class="tag tag-pending">PENDING</span>
+
+          <div class="float-card float-feedback">
+            <span class="float-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </span>
+            <span class="float-text">
+              <strong>Feedback</strong>
+              <span class="analyzing">Analyzing<span class="bounce-dots"><span></span><span></span><span></span></span></span>
+            </span>
           </div>
-          <div class="dash-row">
-            <span>Mock Tests</span>
-            <span class="tag tag-pending">PENDING</span>
+
+          <div class="float-card float-ready">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            Interview Ready
           </div>
         </div>
       </div>
@@ -319,7 +399,7 @@
             <span class="tag">Coding</span>
             <h3>Coding Basics Test</h3>
             <p>10 questions on programming fundamentals across languages.</p>
-            <a href="pages/resources.html" class="btn btn-outline btn-block">Coming Soon</a>
+            <button class="btn btn-primary btn-block" id="start-coding-test">Start Test</button>
           </article>
           <article class="mocktest-card">
             <span class="tag">Interview</span>

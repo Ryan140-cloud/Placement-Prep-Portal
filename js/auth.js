@@ -208,6 +208,35 @@ function setupSignupForm() {
 }
 
 /* ---------- SIGN IN ---------- */
+// Returns the signed-in session object, or null if nobody is
+// signed in. Older sessions stored just the email as a plain
+// string, so if JSON.parse fails we wrap that string instead.
+function getLoggedInUser() {
+  const raw = localStorage.getItem("loggedInUser");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return { email: raw };
+  }
+}
+
+// Prefills the email box if "Remember Me" was ticked last time.
+function prefillRememberedEmail() {
+  const raw = localStorage.getItem("rememberMe");
+  if (!raw) return;
+  let remembered = null;
+  try {
+    remembered = JSON.parse(raw);
+  } catch (error) {
+    return;
+  }
+  if (remembered && remembered.email) {
+    document.getElementById("loginEmail").value = remembered.email;
+    document.getElementById("rememberMe").checked = true;
+  }
+}
+
 function setupLoginForm() {
   const form = document.getElementById("login-form");
   if (!form) return;
@@ -222,6 +251,14 @@ function setupLoginForm() {
   }
 
   setupPasswordToggles();
+
+  // Already signed in? Skip the login page entirely.
+  if (getLoggedInUser()) {
+    window.location.replace("dashboard.html");
+    return;
+  }
+
+  prefillRememberedEmail();
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -263,10 +300,22 @@ function setupLoginForm() {
     const savedUser = savedUserRaw ? JSON.parse(savedUserRaw) : null;
 
     if (savedUser && savedUser.email === email && savedUser.password === password) {
-      localStorage.setItem("loggedInUser", email);
+      // Session copy of the profile — the password is never included.
+      const session = {
+        fullName: savedUser.fullName,
+        email: savedUser.email,
+        college: savedUser.college,
+        course: savedUser.course,
+        gradYear: savedUser.gradYear,
+        githubUsername: savedUser.githubUsername || "",
+        loggedInAt: new Date().toISOString(),
+      };
+      localStorage.setItem("loggedInUser", JSON.stringify(session));
 
       if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
+        localStorage.setItem("rememberMe", JSON.stringify({ email: savedUser.email }));
+      } else {
+        localStorage.removeItem("rememberMe");
       }
 
       alertBox.textContent = "Login successful!";
