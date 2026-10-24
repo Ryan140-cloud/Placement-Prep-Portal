@@ -3,14 +3,38 @@
    Handles: CAPTCHA, Sign Up, Sign In, Show/Hide password.
 
    IMPORTANT (for viva): this is a FRONTEND-ONLY demo. There
-   is no server or database. The registered user's details
-   are saved as a plain JavaScript object inside the
-   browser's localStorage, and login simply compares against
-   that saved object. This is fine to demonstrate the idea of
-   authentication, but is NOT secure enough for a real,
-   production website (passwords should never be stored in
-   plain text on a real system).
+   is no server or database. Every account is saved as a plain
+   JavaScript object in one array, localStorage key "users",
+   so many students can sign up in the same browser. Sign Up
+   refuses an email that's already in the list, and login
+   finds the account by email and compares the password. This
+   is fine to demonstrate the idea of authentication, but is
+   NOT secure enough for a real, production website (passwords
+   should never be stored in plain text on a real system).
+
+   (Older versions kept a single user in "registeredUser";
+   main.js moves that user into "users" automatically.)
    ===================================================== */
+
+/* ---------- ACCOUNTS ---------- */
+function getUsers() {
+  const users = JSON.parse(localStorage.getItem("users"));
+  return Array.isArray(users) ? users : [];
+}
+
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+// Emails are compared in lower case, so "Asha@Mail.com" and
+// "asha@mail.com" count as the same account.
+function findUserByEmail(email) {
+  const target = email.toLowerCase();
+  const match = getUsers().find(function (user) {
+    return user.email && user.email.toLowerCase() === target;
+  });
+  return match || null;
+}
 
 /* ---------- CAPTCHA ---------- */
 function generateCaptcha() {
@@ -136,6 +160,9 @@ function setupSignupForm() {
     if (!isValidEmail(email)) {
       showError("email", "Please enter a valid email address.");
       isFormValid = false;
+    } else if (findUserByEmail(email)) {
+      showError("email", "An account with this email already exists. Please sign in.");
+      isFormValid = false;
     }
 
     if (!isValidPhone(phone)) {
@@ -194,7 +221,8 @@ function setupSignupForm() {
       gradYear: gradYear,
     };
 
-    localStorage.setItem("registeredUser", JSON.stringify(user));
+    // concat() returns a new array with the new user added at the end.
+    saveUsers(getUsers().concat([user]));
 
     const alertBox = document.getElementById("signup-alert");
     alertBox.textContent = "Account created successfully! Redirecting to Sign In...";
@@ -296,10 +324,9 @@ function setupLoginForm() {
       return;
     }
 
-    const savedUserRaw = localStorage.getItem("registeredUser");
-    const savedUser = savedUserRaw ? JSON.parse(savedUserRaw) : null;
+    const savedUser = findUserByEmail(email);
 
-    if (savedUser && savedUser.email === email && savedUser.password === password) {
+    if (savedUser && savedUser.password === password) {
       // Session copy of the profile — the password is never included.
       const session = {
         fullName: savedUser.fullName,

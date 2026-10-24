@@ -164,5 +164,7 @@ body.dark-mode .captcha-display { color: var(--text); }
 body.dark-mode .auth-alert.success { color: var(--teal); }
 
 .auth-footer-link { text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted); }
-.auth-footer-link a { color: var(--teal-dark); font-weight: 600; }
-body.dark-mode .auth-footer-link a { color: var(--teal); }
+.auth-footer-link a,
+.checkbox-row a { color: var(--teal-dark); font-weight: 600; }
+body.dark-mode .auth-footer-link a,
+body.dark-mode .checkbox-row a { color: var(--teal); }

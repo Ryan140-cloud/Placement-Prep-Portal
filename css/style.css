@@ -859,15 +859,44 @@ body.dark-mode .feature-icon { color: var(--teal); }
 .company-card h4 { font-size: 0.92rem; margin-bottom: 4px; }
 .company-card span { font-size: 0.76rem; color: var(--text-muted); }
 
-.company-note {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  margin-top: 26px;
-  min-height: 22px;
+.company-card { cursor: pointer; }
+.company-card.active,
+.company-card.active:hover {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 1px var(--teal);
 }
-.company-note.show { color: var(--teal-dark); font-weight: 600; }
-body.dark-mode .company-note.show { color: var(--teal); }
+
+/* Hidden until a company card is clicked (main.js adds .show). */
+.company-panel {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--teal);
+  border-radius: var(--radius-sm);
+  padding: 24px 26px;
+  margin-top: 26px;
+}
+.company-panel.show { display: block; }
+.company-panel h3 { margin-bottom: 4px; }
+.company-panel h4 { font-size: 0.95rem; margin: 18px 0 8px; }
+.company-panel ol,
+.company-panel ul { padding-left: 22px; color: var(--text-muted); }
+.company-panel ol { list-style: decimal; }
+.company-panel ul { list-style: disc; }
+.company-panel li { margin-bottom: 4px; }
+.company-panel-exam { color: var(--teal-dark); font-weight: 600; }
+body.dark-mode .company-panel-exam { color: var(--teal); }
+.company-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.company-panel-note {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
 
 /* ---------- 12. MOCK TESTS ---------- */
 .mocktest-grid {
@@ -943,6 +972,8 @@ body.dark-mode .mocktest-card .tag { color: var(--teal); }
   font-weight: 700;
 }
 body.dark-mode .quiz-result .score-num { color: var(--teal); }
+.quiz-readiness { font-weight: 600; margin-bottom: 22px; }
+.quiz-result-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 
 /* ---------- 13. CTA ---------- */
 .cta {
@@ -1023,14 +1054,76 @@ body.dark-mode .resource-card .icon { color: var(--teal); }
 .resource-card h3 { font-size: 1.05rem; margin-bottom: 8px; }
 .resource-card p { color: var(--text-muted); font-size: 0.87rem; margin-bottom: 16px; }
 
+/* Resources search: × clear button inside the bar + match count.
+   Two-class selectors so they win over the general .hero-search-bar
+   button style and its stacked phone layout. */
+.hero-search-bar.resource-search-bar { flex-direction: row; border-radius: 999px; margin: 0 0 10px; }
+.hero-search-bar .search-clear {
+  background: none;
+  color: var(--text-muted);
+  padding: 0 18px;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+.hero-search-bar .search-clear:hover { background: none; color: var(--text); }
+.hero-search-bar .search-clear[hidden] { display: none; }
+.resource-count { color: var(--text-muted); font-size: 0.85rem; margin: 0 0 32px 4px; }
+
 .no-results { text-align: center; color: var(--text-muted); padding: 40px 0; display: none; }
 .no-results.show { display: block; }
+
+/* --- Resource detail page (resource-detail.html) --- */
+.resource-back {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--teal-dark);
+}
+body.dark-mode .resource-back { color: var(--teal); }
+
+/* Category buttons reuse .chip and its aria-pressed highlight. */
+.resource-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+.resource-tabs .chip { background: none; cursor: pointer; }
+
+.resource-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.resource-link {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.resource-link:hover { border-color: var(--teal); transform: translateY(-2px); }
+.resource-link-title { font-weight: 600; color: var(--text); }
+.resource-link-note { font-size: 0.85rem; color: var(--text-muted); }
+.resource-empty { color: var(--text-muted); padding: 20px 0; }
 
 /* ---------- 16. ABOUT PAGE ---------- */
 .about-block { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
 .about-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; }
 .about-card h3 { margin-bottom: 12px; font-size: 1.15rem; }
 .about-card p { color: var(--text-muted); font-size: 0.94rem; }
+
+/* Privacy Policy and Terms pages: About-style cards in one
+   readable column. */
+.legal-page { max-width: 820px; }
+.legal-updated { margin-top: 10px; font-size: 0.85rem; font-family: var(--font-mono); }
+.legal-card { margin-bottom: 20px; }
+.legal-card p + p,
+.legal-card p + .legal-list,
+.legal-card .legal-list + p { margin-top: 12px; }
+.legal-list { list-style: disc; padding-left: 22px; color: var(--text-muted); font-size: 0.94rem; }
+.legal-list li { margin-bottom: 6px; }
+.legal-card a { color: var(--teal-dark); font-weight: 600; }
+body.dark-mode .legal-card a { color: var(--teal); }
 
 .benefit-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
 .benefit-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.94rem; color: var(--text-muted); }
@@ -1151,6 +1244,18 @@ body.dark-mode .dash-stat-card .stat-number { color: var(--teal); }
 /* Category progress bars */
 .progress-row { margin-bottom: 18px; }
 .progress-row:last-child { margin-bottom: 0; }
+
+.progress-advice {
+  margin-top: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 165, 178, 0.1);
+  color: var(--teal-dark);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.progress-advice:empty { display: none; }
+body.dark-mode .progress-advice { color: var(--teal); }
 
 .progress-row-head {
   display: flex;
@@ -1391,13 +1496,13 @@ body.dark-mode .github-lang-chip { color: var(--teal); }
 .quiz-option.wrong { border-color: var(--danger); background: rgba(214, 69, 80, 0.1); }
 .quiz-option.locked { cursor: default; }
 
-/* ---------- 23. COMPANY NOTE POP-IN ---------- */
-.company-note {
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  opacity: 0;
-  transform: translateY(-4px);
+/* ---------- 23. COMPANY PANEL POP-IN ---------- */
+/* Plays when the panel first appears (display: none -> block). */
+.company-panel.show { animation: companyPanelIn 0.25s ease; }
+@keyframes companyPanelIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.company-note.show { opacity: 1; transform: translateY(0); }
 
 /* ---------- 24. THEME TOGGLE SPIN ---------- */
 .theme-toggle { transition: transform 0.4s ease; }

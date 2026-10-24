@@ -26,6 +26,9 @@ const ALLOWED_SENIORITY = ["Entry-level"];
 const HIMALAYAS_TIMEOUT_MS = 10000; // give up on Himalayas after 10 seconds
 const CACHE_HEADER = "s-maxage=21600, stale-while-revalidate=3600"; // 6 hours (+1 hour stale)
 
+// PROMISE DEMO: async/await (on the server)
+// The handler awaits the Himalayas fetch before replying, so
+// Vercel gets one finished response per request.
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");

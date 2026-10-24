@@ -8,17 +8,23 @@
    is still small and commented, but it's a step up from the
    plain loops used elsewhere in the project.
 
-   Where the numbers come from (all frontend-only, no backend):
-     - "registeredUser"   -> saved at Sign Up (auth.js)
+   Where the numbers come from (all frontend-only, no backend,
+   everything lives in this browser's localStorage):
+     - "users"            -> every account, saved at Sign Up (auth.js);
+                             the Dashboard shows the logged-in one
+     - "loggedInUser"     -> who is signed in right now (no password)
      - "mockTestHistory"  -> saved every time a mock test ends (main.js)
      - "resourceClicks"   -> counted every time an "Explore"
                              button is clicked on a resource card
      - "githubCache"      -> last GitHub API result + when it was
                              fetched (reused for 30 minutes)
+   The last three are kept separately for each account:
+   userKey() in main.js adds the email, e.g.
+   "mockTestHistory:asha@example.com".
    ===================================================== */
 
 const STORAGE_KEYS = {
-  user: "registeredUser",
+  users: "users",
   loggedIn: "loggedInUser",
   history: "mockTestHistory",
   clicks: "resourceClicks",
@@ -27,9 +33,17 @@ const STORAGE_KEYS = {
 
 // Small arrow-function helpers — each just reads one piece of
 // data out of localStorage and gives it a sensible default.
-const getUser = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.user)) || null;
-const getHistory = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.history)) || [];
-const getClicks = () => parseInt(localStorage.getItem(STORAGE_KEYS.clicks)) || 0;
+const getAccounts = () => JSON.parse(localStorage.getItem(STORAGE_KEYS.users)) || [];
+const getHistory = () => JSON.parse(localStorage.getItem(userKey(STORAGE_KEYS.history))) || [];
+const getClicks = () => parseInt(localStorage.getItem(userKey(STORAGE_KEYS.clicks))) || 0;
+
+// The logged-in student's account from "users", or null.
+// getLoggedInEmail() (main.js) is already in lower case.
+const getUser = () => {
+  const email = getLoggedInEmail();
+  if (!email) return null;
+  return getAccounts().find((account) => (account.email || "").toLowerCase() === email) || null;
+};
 
 // The signed-in session saved by auth.js (JSON, no password).
 // Very old sessions were just the email as plain text, so if
@@ -54,7 +68,22 @@ document.addEventListener("DOMContentLoaded", function () {
   renderProfile(user);
   setupProfileEditing(user);
   setupGithubCard();
-  renderGithubCard(user);
+
+  // PROMISE DEMO: Promise.allSettled
+  // Starts the GitHub card and the Tip of the day at the same time.
+  //   - Promise.all fails as soon as ONE Promise rejects, and the
+  //     results of the others are lost.
+  //   - Promise.allSettled waits for ALL of them to finish and
+  //     reports each one as "fulfilled" or "rejected".
+  // So one broken API can never stop us hearing about the other.
+  // (Try it: in DevTools > Network, right-click the adviceslip
+  // request > "Block request URL", then reload. The tip falls
+  // back to a built-in one and is counted as rejected.)
+  Promise.allSettled([renderGithubCard(user), loadTipOfTheDay()]).then((results) => {
+    const fulfilled = results.filter((result) => result.status === "fulfilled").length;
+    const rejected = results.length - fulfilled;
+    console.log(`Dashboard loaded: ${fulfilled} fulfilled, ${rejected} rejected`);
+  });
 });
 
 /* ---------- WELCOME HEADER ---------- */
@@ -65,36 +94,32 @@ function renderWelcome(user) {
   if (subEl) subEl.textContent = `${user.course} · Class of ${user.gradYear} · ${user.college}`;
 }
 
-/* ---------- READINESS CALCULATIONS ---------- */
-// Four simple, explainable rules turn raw activity (clicks,
-// quiz attempts) into a percentage per category. None of this
-// is "real" — it's a frontend demo — but the math is genuine.
-function calculateCategoryReadiness() {
-  const history = getHistory();
-  const clicks = getClicks();
+/* ---------- READINESS ---------- */
+// calculateReadiness() lives in main.js (loaded before this file)
+// so the homepage and the Dashboard always show the same numbers.
+// Its rules are explained in the comment above it there.
 
-  const aptitude = history.length > 0 ? 100 : 20;
-  const codingDsa = Math.min(100, clicks * 15);
-  const interview = Math.min(100, Math.max(0, (clicks - 3) * 20));
-  const mockTests = Math.min(100, history.length * 25);
-
-  return { aptitude, codingDsa, interview, mockTests };
-}
+// One "next step" per category, used when it's the lowest one.
+// The first text is for a test never taken, the second for a
+// test taken but not yet at 100%.
+const NEXT_STEPS = {
+  aptitude: ["take the Aptitude test", "retake the Aptitude test to raise your best score"],
+  codingDsa: ["take the Coding Basics test", "retake the Coding Basics test and explore the Coding & DSA resources"],
+  interview: ["take the Interview Basics test", "retake the Interview Basics test to raise your best score"],
+  mockTests: ["score 60% or more on all 3 mock tests", "score 60% or more on all 3 mock tests"],
+};
 
 function renderStatsAndProgress() {
-  const { aptitude, codingDsa, interview, mockTests } = calculateCategoryReadiness();
   const history = getHistory();
-
-  // Overall readiness = the average of the four categories,
-  // calculated with reduce() instead of a manual running total.
-  const categories = [aptitude, codingDsa, interview, mockTests];
-  const overall = Math.round(categories.reduce((sum, value) => sum + value, 0) / categories.length);
+  const readiness = calculateReadiness(history, getClicks());
+  const { aptitude, codingDsa, interview, mockTests, overall } = readiness;
 
   paintRing(overall);
   animateProgressBar("apt", aptitude);
   animateProgressBar("coding", codingDsa);
   animateProgressBar("interview", interview);
   animateProgressBar("mocktest", mockTests);
+  renderAdvice(readiness);
 
   // Scores are converted to "out of 10" so they're easy to
   // compare regardless of how many questions a test has.
@@ -115,6 +140,24 @@ function renderStatsAndProgress() {
     if (bestEl) bestEl.textContent = best + "/10";
     if (avgEl) avgEl.textContent = average + "/10";
   }
+}
+
+// Points the student at their lowest category. If two are tied,
+// the one listed first (Aptitude, Coding, Interview, Mock Tests) wins.
+function renderAdvice(readiness) {
+  const adviceEl = document.getElementById("progress-advice");
+  if (!adviceEl) return;
+
+  if (readiness.overall === 100) {
+    adviceEl.textContent = "Great work, you are placement ready!";
+    return;
+  }
+
+  const lowestKey = Object.keys(NEXT_STEPS).reduce((lowest, key) =>
+    readiness[key] < readiness[lowest] ? key : lowest
+  );
+  const [neverTried, tryAgain] = NEXT_STEPS[lowestKey];
+  adviceEl.textContent = `Next step: ${readiness[lowestKey] === 0 ? neverTried : tryAgain}.`;
 }
 
 // Paints the circular ring using a CSS conic-gradient built
@@ -166,6 +209,7 @@ function renderHistoryTable() {
   const testLabels = {
     "Aptitude": "Aptitude Mock Test",
     "Coding Basics": "Coding Basics Test",
+    "Interview Basics": "Interview Basics Test",
   };
 
   // .map() turns each attempt object into a table row, and
@@ -268,7 +312,13 @@ function setupProfileEditing(user) {
       githubUsername: githubUsername,
     };
 
-    localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(updatedUser));
+    // Swap this student's old account for the updated one inside
+    // "users". map() builds a new array; every other account is
+    // copied across unchanged.
+    const updatedAccounts = getAccounts().map((account) =>
+      (account.email || "").toLowerCase() === user.email.toLowerCase() ? updatedUser : account
+    );
+    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(updatedAccounts));
     user = updatedUser;
 
     // Keep the signed-in session (auth.js) in step with the edits.
@@ -351,8 +401,10 @@ const fetchGithubJson = async (url) => {
   return response.json();
 };
 
+// PROMISE DEMO: Promise.all
 // Fetches the profile and repos at the same time (Promise.all)
-// and keeps only the fields the card needs.
+// and keeps only the fields the card needs. If EITHER request
+// fails, Promise.all rejects and the card shows the error.
 const loadGithubData = async (username) => {
   const userUrl = GITHUB_API_BASE + encodeURIComponent(username);
   const [profile, repos] = await Promise.all([
@@ -386,7 +438,7 @@ const loadGithubData = async (username) => {
 // less than 30 minutes old; otherwise null (= fetch again).
 const readGithubCache = (username) => {
   try {
-    const cached = JSON.parse(localStorage.getItem(STORAGE_KEYS.githubCache));
+    const cached = JSON.parse(localStorage.getItem(userKey(STORAGE_KEYS.githubCache)));
     const isFresh =
       cached &&
       cached.username === username.toLowerCase() &&
@@ -399,7 +451,7 @@ const readGithubCache = (username) => {
 
 const writeGithubCache = (data) => {
   try {
-    localStorage.setItem(STORAGE_KEYS.githubCache, JSON.stringify(data));
+    localStorage.setItem(userKey(STORAGE_KEYS.githubCache), JSON.stringify(data));
   } catch (error) {
     // Storage full or blocked: the card still works, just uncached.
   }
@@ -577,4 +629,38 @@ const setupGithubCard = () => {
     const user = getUser();
     if (user) renderGithubCard(user, true);
   });
+};
+
+/* ---------- TIP OF THE DAY ---------- */
+
+const ADVICE_API_URL = "https://api.adviceslip.com/advice";
+
+// Shown instead when the Advice Slip API can't be reached.
+const PLACEMENT_TIPS = [
+  "Solve at least one aptitude set every day; speed comes from practice.",
+  "Before an interview, read the company's recent news and products.",
+  "Explain your projects out loud: what you built, why, and what you learned.",
+  "Revise arrays, strings and linked lists first; they appear in most coding rounds.",
+  "Keep your resume to one page and be ready to talk about every line on it.",
+];
+
+// Fills the Tip of the day panel. If the API fails we still show
+// a built-in tip, then re-throw the error so Promise.allSettled
+// (above) records this task as "rejected".
+const loadTipOfTheDay = async () => {
+  const tipText = document.getElementById("tip-text");
+  if (!tipText) return;
+
+  try {
+    // no-store: ask the browser for a fresh tip every time.
+    const response = await fetch(ADVICE_API_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Advice Slip returned ${response.status}`);
+    const data = await response.json();
+    if (!data.slip || !data.slip.advice) throw new Error("Advice Slip sent no advice");
+    tipText.textContent = data.slip.advice;
+  } catch (error) {
+    const randomIndex = Math.floor(Math.random() * PLACEMENT_TIPS.length);
+    tipText.textContent = PLACEMENT_TIPS[randomIndex];
+    throw error;
+  }
 };

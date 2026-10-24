@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("contact-form");
   if (!form) return;
 
-  form.addEventListener("submit", async function (event) {
+  form.addEventListener("submit", function (event) {
     event.preventDefault();
 
     let isFormValid = true;
@@ -98,32 +98,40 @@ document.addEventListener("DOMContentLoaded", function () {
       payload.botcheck = true;
     }
 
-    try {
-      const response = await fetch(WEB3FORMS_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
+    // PROMISE DEMO: .then() / .catch() / .finally()
+    // fetch() returns a Promise. Each .then() runs when the step
+    // before it succeeds, .catch() runs if ANY step fails, and
+    // .finally() always runs at the end, success or failure.
+    fetch(WEB3FORMS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then(function (response) {
+        // .json() also returns a Promise; the next .then() gets its result.
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.success === true) {
+          showContactStatus("Thank you! Your message has been submitted successfully.", false);
+          form.reset();
+        } else {
+          // Web3Forms explains what went wrong in result.message.
+          const reason = result.message ? " (" + result.message + ")" : "";
+          showContactStatus("Sorry, your message could not be sent" + reason + ". Please try again.", true);
+        }
+      })
+      .catch(function () {
+        // fetch() rejects when offline; .json() rejects on a non-JSON reply.
+        showContactStatus("Could not reach the email service. Check your connection and try again.", true);
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
       });
-      const result = await response.json();
-
-      if (result.success === true) {
-        showContactStatus("Thank you! Your message has been submitted successfully.", false);
-        form.reset();
-      } else {
-        // Web3Forms explains what went wrong in result.message.
-        const reason = result.message ? " (" + result.message + ")" : "";
-        showContactStatus("Sorry, your message could not be sent" + reason + ". Please try again.", true);
-      }
-    } catch (error) {
-      // fetch() throws when offline; .json() throws on a non-JSON reply.
-      showContactStatus("Could not reach the email service. Check your connection and try again.", true);
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalBtnText;
-    }
   });
 
   form.addEventListener("reset", function () {

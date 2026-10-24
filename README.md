@@ -20,6 +20,11 @@ a working sample mock test.
 - Vanilla JavaScript (no frameworks, no libraries)
 - Browser `localStorage` for demo user data and theme (no backend, no database)
 
+JavaScript Promises (`new Promise`, `.then/.catch/.finally`, `Promise.all`,
+`Promise.allSettled`, `Promise.race`, `async/await`) are used inside real
+features. See [PROMISES.md](PROMISES.md) for where each one is and how to
+see it working.
+
 ## Features
 
 | Feature | Description |
@@ -32,7 +37,7 @@ a working sample mock test.
 | Preparation Categories | Aptitude, Coding, DSA and Interview topic lists |
 | Feature Grid | Built with CSS Grid, 4 columns → 2 → 1 responsively |
 | Company Preparation | 8 company cards with a simple click interaction |
-| Mock Tests | A real 5-question Aptitude quiz with scoring, plus two "coming soon" cards |
+| Mock Tests | Three working tests with scoring and instant answer feedback: Aptitude (5 questions), Coding Basics (10 questions from an online question bank, with built-in backup questions) and Interview Basics (10 HR + technical questions) |
 | Resources Page | 12 topic cards (CSS Grid) with a live JavaScript search |
 | Sign Up | Full registration form with validation + CAPTCHA, saved to `localStorage` |
 | Sign In | Compares entered credentials with the saved user, includes CAPTCHA and Show/Hide Password; redirects straight into the Dashboard on success |
@@ -58,8 +63,11 @@ Placement-Prep-Portal/
 │   ├── login.html           → Sign In page
 │   ├── signup.html          → Sign Up / registration page
 │   ├── resources.html       → Resource library (CSS Grid) with search
+│   ├── resource-detail.html → Links for one topic (?topic=...), in six categories
 │   ├── dashboard.html       → Logged-in student dashboard
 │   ├── about.html           → About Us page
+│   ├── privacy.html         → Privacy Policy (what is stored, and where)
+│   ├── terms.html           → Terms & Conditions
 │   └── contact.html         → Contact Us page
 │
 ├── css/
@@ -75,6 +83,7 @@ Placement-Prep-Portal/
 │   │                              show/hide password
 │   ├── theme.js                  → Light/dark mode toggle and localStorage persistence
 │   ├── contact.js                 → Contact form validation and submission
+│   ├── resource-detail.js         → Topic links + L()/B()/YT()/G() helpers
 │   └── dashboard.js                → Dashboard-only: readiness stats, progress bars,
 │                                      mock test history, profile editing
 │
@@ -118,9 +127,14 @@ three breakpoints in action.
 
 Sign Up and Sign In are built entirely with JavaScript and `localStorage`
 for demonstration purposes, as required for a frontend-only college
-project. `localStorage.setItem("registeredUser", ...)` saves the signed-up
-user as a JSON string; Sign In reads it back with `JSON.parse()` and
-compares the entered email/password against it. This is **not** a secure,
+project. Every account is saved in one JSON array under the `users` key,
+so several students can sign up in the same browser. Sign Up refuses an
+email that already has an account, and Sign In finds the account by email
+(ignoring upper/lower case) and compares the password. Each student's mock
+test history, resource clicks and GitHub cache are saved separately under
+`<key>:<email>` (for example `mockTestHistory:asha@example.com`) using the
+`userKey()` helper in `js/main.js`. Data from the older single-user version
+(`registeredUser`) is moved across automatically. This is **not** a secure,
 production-grade authentication system — a real website would need a
 backend server, a database, and properly hashed passwords. This
 limitation is intentional and expected for this assignment.
@@ -154,15 +168,19 @@ Everything shown on it is calculated from data already in `localStorage`:
 - **Overall Readiness ring** — an average of four category percentages,
   rendered with a CSS `conic-gradient` whose stop point is set by
   JavaScript based on the calculated percentage.
-- **Category progress bars** — Aptitude is 100% once at least one mock
-  test has been attempted; Coding/DSA and Interview Prep scale with a
-  `resourceClicks` counter (incremented every time an "Explore" button is
-  clicked anywhere on the site); Mock Tests scales with how many attempts
-  are on record.
+- **Category progress bars** — worked out from the student's own test
+  results by `calculateReadiness()` in `js/main.js`, which the homepage
+  uses too, so both always match. Aptitude and Interview = best score in
+  that test. Coding & DSA = 80% from the best Coding Basics score + 20%
+  from resources explored (the `resourceClicks` counter; 5 clicks gives
+  the full 20%). Mock Tests = how many of the 3 tests were passed with
+  60% or more. A "Next step" line under the bars points at the lowest one.
 - **Mock Test History table** — every completed mock test is saved as
-  `{ date, score, total }` into a `mockTestHistory` array in
-  `localStorage` (capped at the 10 most recent), then rendered with
+  `{ date, time, test, score, total }` into a `mockTestHistory` array in
+  `localStorage` (capped at the 50 most recent), then rendered with
   `.map()` into table rows.
+- **Homepage Readiness Score** — when logged in, the hero card shows the
+  same overall readiness as the ring; logged out, it shows a sample 82.
 - **Editable profile** — toggling "Edit Profile" reveals a small form;
   saving it merges the changes into the stored user object with the
   spread operator (`{ ...user, college: newValue }`) and re-renders.
