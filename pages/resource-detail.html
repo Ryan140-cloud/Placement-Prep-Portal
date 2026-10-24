@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Resources | Placement Prep Portal</title>
+  <title>Resource | Placement Prep Portal</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet" />
@@ -11,7 +11,9 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/forms.css" />
   <link rel="stylesheet" href="../css/responsive.css" />
+  <link rel="stylesheet" href="../css/resource-detail.css" />
 </head>
+<!-- data-page="resources" keeps "Resources" highlighted in the navbar -->
 <body data-page="resources">
 
   <div id="loading-screen">
@@ -50,19 +52,26 @@
   <main class="page-offset">
     <section class="section">
       <div class="container">
-        <a href="resources.html" class="resource-back">← All resources</a>
-
-        <!-- Title, intro, category buttons and links are filled in
-             by js/resource-detail.js from the ?topic= in the URL -->
         <div class="section-head">
-          <p class="eyebrow">Preparation Library</p>
-          <h2 id="topic-title">Resources</h2>
-          <p id="topic-intro"></p>
+          <p class="eyebrow" id="rd-eyebrow">Preparation Library</p>
+          <h2 id="rd-title">Resource</h2>
+          <p id="rd-desc">Pick a category to see the study material.</p>
         </div>
 
-        <div class="resource-tabs" id="resource-tabs" role="group" aria-label="Resource categories"></div>
+        <a href="resources.html" class="btn btn-outline btn-sm rd-back">← Back to Resources</a>
 
-        <div id="resource-list" aria-live="polite"></div>
+        <!-- Category cards (rendered by js/resource-detail.js) -->
+        <div class="rd-grid" id="rd-grid"></div>
+
+        <!-- Links for the selected category -->
+        <div class="rd-panel" id="rd-panel" hidden>
+          <h3 id="rd-panel-title"></h3>
+          <ul id="rd-panel-list"></ul>
+        </div>
+
+        <p class="no-results" id="rd-notfound" style="display:none;">
+          That resource was not found. <a href="resources.html">Go back to Resources</a>.
+        </p>
       </div>
     </section>
   </main>

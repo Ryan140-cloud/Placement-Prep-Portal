@@ -1072,40 +1072,6 @@ body.dark-mode .resource-card .icon { color: var(--teal); }
 .no-results { text-align: center; color: var(--text-muted); padding: 40px 0; display: none; }
 .no-results.show { display: block; }
 
-/* --- Resource detail page (resource-detail.html) --- */
-.resource-back {
-  display: inline-block;
-  margin-bottom: 18px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--teal-dark);
-}
-body.dark-mode .resource-back { color: var(--teal); }
-
-/* Category buttons reuse .chip and its aria-pressed highlight. */
-.resource-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
-.resource-tabs .chip { background: none; cursor: pointer; }
-
-.resource-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-}
-.resource-link {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 18px 20px;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-.resource-link:hover { border-color: var(--teal); transform: translateY(-2px); }
-.resource-link-title { font-weight: 600; color: var(--text); }
-.resource-link-note { font-size: 0.85rem; color: var(--text-muted); }
-.resource-empty { color: var(--text-muted); padding: 20px 0; }
-
 /* ---------- 16. ABOUT PAGE ---------- */
 .about-block { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
 .about-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; }
