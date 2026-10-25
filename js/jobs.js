@@ -100,6 +100,9 @@ function syncKeywordChips() {
   });
 }
 
+// PROMISE DEMO: async/await
+// `await fetchJobs(page)` waits for the jobs to arrive without
+// freezing the page. If the Promise rejects, we land in `catch`.
 async function loadJobs(page) {
   const requestId = ++jobsState.requestId;
   const isFirstPage = page === 1;

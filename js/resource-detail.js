@@ -291,15 +291,47 @@
     'technical-interviews': {
       title: 'Technical Interviews',
       desc: 'Common technical interview questions and how to answer them.',
-      websites: [L('GeeksforGeeks – Interview Corner', 'https://www.geeksforgeeks.org/')],
-      notes: []
+      websites: [
+        L('GeeksforGeeks – Interview Corner', 'https://www.geeksforgeeks.org/interview-experiences/company-interview-corner/'),
+        L('InterviewBit', 'https://www.interviewbit.com/'),
+        L('LeetCode – Interview', 'https://leetcode.com/explore/interview/'),
+        L('Pramp – Free mock interviews', 'https://www.pramp.com/'),
+        L('Tech Interview Handbook', 'https://www.techinterviewhandbook.org/')
+      ],
+      youtube: [
+        L('take U forward (Striver)', 'https://www.youtube.com/@takeUforward'),
+        L('Apna College', 'https://www.youtube.com/@ApnaCollegeOfficial'),
+        L('NeetCode', 'https://www.youtube.com/@NeetCode')
+      ],
+      books: [
+        B('Cracking the Coding Interview', 'Gayle Laakmann McDowell'),
+        B('Programming Interviews Exposed', 'John Mongan, Noah Kindler & Eric Giguère')
+      ],
+      notes: [L('Tech Interview Handbook – Coding interview prep guide', 'https://www.techinterviewhandbook.org/coding-interview-prep/')],
+      extra: [L('InterviewBit – Mock interviews', 'https://www.interviewbit.com/mock-interview/')],
+      cho: [L('Tech Interview Handbook – Algorithms study cheat sheet', 'https://www.techinterviewhandbook.org/algorithms/study-cheatsheet/')]
     },
 
     'hr-interviews': {
       title: 'HR Interviews',
       desc: 'Behavioural questions, resume walkthroughs and communication tips.',
-      websites: [L('Indeed – Interview Tips', 'https://www.indeed.com/career-advice/interviewing')],
-      notes: []
+      websites: [
+        L('Indeed – Interview Tips', 'https://www.indeed.com/career-advice/interviewing'),
+        L('The Muse – Interview questions & answers', 'https://www.themuse.com/advice/interview-questions-and-answers'),
+        L('Glassdoor – Interview questions', 'https://www.glassdoor.co.in/Interview/index.htm'),
+        L('LinkedIn Learning – Interview tips', 'https://www.linkedin.com/learning/search?keywords=job%20interview')
+      ],
+      youtube: [
+        L('Search: Jeff Su – interview tips', YT('Jeff Su job interview tips')),
+        L('Search: Andrew LaCivita – interview questions', YT('Andrew LaCivita interview questions and answers'))
+      ],
+      books: [
+        B("Knock 'em Dead Job Interview", 'Martin Yate'),
+        B('101 Great Answers to the Toughest Interview Questions', 'Ron Fry')
+      ],
+      notes: [L('Indeed – Top interview questions and answers', 'https://www.indeed.com/career-advice/interviewing/top-interview-questions-and-answers')],
+      extra: [L('Search: STAR method guide', G('STAR method interview answers guide with examples'))],
+      cho: [L('Search: Common HR questions cheat sheet', G('common HR interview questions and answers cheat sheet'))]
     }
   };
 
@@ -308,7 +340,10 @@
     '<path d="M74 26 94 46 74 66 54 46z"/><path d="M50 50 70 70 50 90 30 70z"/></svg>';
 
   var params = new URLSearchParams(window.location.search);
-  var topic = TOPICS[params.get('topic')];
+  var topicKey = params.get('topic');
+  // hasOwnProperty: only our own topics count, not built-in names
+  // like "toString" that every object has.
+  var topic = Object.prototype.hasOwnProperty.call(TOPICS, topicKey) ? TOPICS[topicKey] : null;
 
   var grid = document.getElementById('rd-grid');
   var panel = document.getElementById('rd-panel');
